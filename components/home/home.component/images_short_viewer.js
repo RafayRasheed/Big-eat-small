@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 // import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
 import { myColors } from '../../../ultils/myColors';
-import { Spacer, myHeight, myWidth } from '../../common';
+import { Spacer, myHeight, myWidth } from '../../../game/common';
 import { myFontSize, myFonts, myLetSpacing } from '../../../ultils/myFonts';
 import { TouchableOpacity } from 'react-native';
 

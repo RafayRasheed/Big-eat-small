@@ -4,7 +4,7 @@ import {
     View, Text, StatusBar, TextInput,
     Linking, Platform, ImageBackground, SafeAreaView, FlatList,
 } from 'react-native';
-import { MyError, Spacer, StatusbarH, ios, myHeight, myWidth } from '../common';
+import { MyError, Spacer, StatusbarH, ios, myHeight, myWidth } from '../../game/common';
 import { myColors } from '../../ultils/myColors';
 import { myFontSize, myFonts, myLetSpacing } from '../../ultils/myFonts';
 import { useSelector } from 'react-redux';

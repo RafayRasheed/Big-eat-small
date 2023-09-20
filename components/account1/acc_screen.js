@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useState, useEffect } from "react";
 import { Image, ScrollView } from "react-native";
 import { View, Text, Dimensions, StyleSheet, StatusBar, TouchableOpacity, BackHandler } from "react-native";
-import { errorTime, Loader, MyError, myHeight, myWidth, Spacer, StatusbarH } from "../common";
+import { errorTime, Loader, MyError, myHeight, myWidth, Spacer, StatusbarH } from "../../game/common";
 import { myFontSize, myFonts, myLetSpacing } from "../../ultils/myFonts";
 import { myColors } from "../../ultils/myColors";
 import { Login } from "./acc.components/login";

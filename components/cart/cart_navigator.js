@@ -4,7 +4,7 @@ import { Cart } from "./cart_screen";
 import { CartDetails } from "./cart_details_screen";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { myColors } from "../../ultils/myColors";
-import { ios, myHeight, myWidth, tabBarStyle } from "../common";
+import { ios, myHeight, myWidth, tabBarStyle } from "../../game/common";
 import { CartDetail } from "./cart_detail_screen";
 
 

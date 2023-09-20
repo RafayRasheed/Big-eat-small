@@ -1,7 +1,7 @@
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { myColors } from '../../../ultils/myColors'
-import { Spacer, StatusbarH, myHeight, myWidth } from '../../common'
+import { Spacer, StatusbarH, myHeight, myWidth } from '../../../game/common'
 import { myFontSize, myFonts, myLetSpacing } from '../../../ultils/myFonts'
 
 export const Filter = ({ setModal }) => {

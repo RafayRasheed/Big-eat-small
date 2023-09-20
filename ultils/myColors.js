@@ -8,6 +8,17 @@ export const myColors = {
     primaryL4: '#edfaed ', //50%
     primaryL5: '#f7fcf7', //30%
     star: '#FFC700',
+
+    //Game
+    yellow1: '#e3b727',
+    yellow2: '#e6be3e',
+    yellow3: '#ebc754',
+    yellow4: '#f0d06c',
+    player1: '#cd3a31',
+    player2: '#4492d4',
+    wood: '#813703',
+    woodD: '#603702',
+
     textL0: '#525252',
     textL: '#8F8F8F',
     textL2: '#9E9C9C',

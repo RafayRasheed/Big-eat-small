@@ -5,7 +5,7 @@ import {
     Linking, Platform, ImageBackground, FlatList,
 } from 'react-native';
 
-import { MyError, Spacer, ios, myHeight, myWidth } from '../common';
+import { MyError, Spacer, ios, myHeight, myWidth } from '../../game/common';
 import { myColors } from '../../ultils/myColors';
 import { myFontSize, myFonts, myLetSpacing } from '../../ultils/myFonts';
 import { ImagesShortViewer } from './home.component/images_short_viewer';

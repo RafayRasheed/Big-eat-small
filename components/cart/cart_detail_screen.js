@@ -6,7 +6,7 @@ import { View, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { myFontSize, myFonts, myLetSpacing } from "../../ultils/myFonts";
 import { myColors } from "../../ultils/myColors";
-import { Spacer, StatusbarH, myHeight, myWidth } from "../common";
+import { Spacer, StatusbarH, myHeight, myWidth } from "../../game/common";
 import { addCart, removeItemCart, removeResCart } from "../../redux/cart_reducer";
 
 

@@ -1,4 +1,4 @@
-const { storage } = require("../common")
+const { storage } = require("../../game/common")
 
 const saveLogin = 'login'
 const saveFirstTime = 'isFirstTime'

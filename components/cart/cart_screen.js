@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View, SafeAreaView, Image, Text, ScrollView, StatusBar, Easing } from 'react-native';
-import { Spacer, StatusBarShow, StatusbarH, ios, myHeight, myWidth } from '../common';
+import { Spacer, StatusBarShow, StatusbarH, ios, myHeight, myWidth } from '../../game/common';
 import { myColors } from '../../ultils/myColors';
 import { myFonts, myLetSpacing, myFontSize } from '../../ultils/myFonts';
 import { useSelector, useDispatch } from 'react-redux'

@@ -1,7 +1,7 @@
 import React from "react"
 import { SafeAreaView, Image, View, TouchableOpacity, Text, StyleSheet } from "react-native"
 import { myColors } from "../../ultils/myColors"
-import { Spacer, myHeight, myWidth } from "../common"
+import { Spacer, myHeight, myWidth } from "../../game/common"
 import { myFontSize, myFonts, myLetSpacing } from "../../ultils/myFonts"
 
 const item = {

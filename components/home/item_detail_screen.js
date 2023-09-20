@@ -3,7 +3,7 @@ import {
     ScrollView, StyleSheet, TouchableOpacity, Image,
     View, Text, StatusBar, TextInput,
 } from 'react-native';
-import { MyError, Spacer, errorTime, ios, myHeight, myWidth } from '../common';
+import { MyError, Spacer, errorTime, ios, myHeight, myWidth } from '../../game/common';
 import { myColors } from '../../ultils/myColors';
 import { myFontSize, myFonts, myLetSpacing } from '../../ultils/myFonts';
 import Animated, { ZoomIn, ZoomOut } from 'react-native-reanimated';

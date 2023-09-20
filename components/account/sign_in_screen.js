@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { Image, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { myFontSize, myFonts, myLetSpacing } from "../../ultils/myFonts"
 import { myColors } from "../../ultils/myColors"
-import { MyError, Spacer, ios, myHeight, myWidth, printWithPlat } from "../common"
+import { MyError, Spacer, ios, myHeight, myWidth, printWithPlat } from "../../game/common"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 // import Flag from './account.component/Email_select';
 import firestore from '@react-native-firebase/firestore';

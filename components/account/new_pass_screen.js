@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Image, Pressable, TouchableOpacity, SafeAreaView, StyleSheet, Text, View, TextInput } from 'react-native';
 import { myColors } from '../../ultils/myColors';
 import { myFontSize, myFonts, myLetSpacing } from '../../ultils/myFonts';
-import { MyError, Spacer, ios, myHeight, myWidth } from '../common';
+import { MyError, Spacer, ios, myHeight, myWidth } from '../../game/common';
 
 export const NewPassword = ({ navigation }) => {
     const [password, setPassword] = useState(null)

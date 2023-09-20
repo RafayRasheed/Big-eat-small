@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, Image, View, Text, FlatList, Modal, UIManager, LayoutAnimation, StatusBar } from 'react-native'
-import { MyError, Spacer, StatusBarBlack, ios, myHeight, myWidth } from '../common';
+import { MyError, Spacer, StatusBarBlack, ios, myHeight, myWidth } from '../../game/common';
 import { myColors } from '../../ultils/myColors';
 import { myFontSize, myFonts, myLetSpacing } from '../../ultils/myFonts';
 import { ImageZoom } from '@likashefqet/react-native-image-zoom';

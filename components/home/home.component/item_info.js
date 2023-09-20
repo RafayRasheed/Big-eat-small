@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { Text, View, Image, StyleSheet, TouchableOpacity } from "react-native"
-import { Spacer, myHeight, myWidth } from "../../common"
+import { Spacer, myHeight, myWidth } from "../../../game/common"
 import { myFontSize, myFonts, myLetSpacing } from "../../../ultils/myFonts"
 import { myColors } from "../../../ultils/myColors"
 import { useDispatch, useSelector } from "react-redux"

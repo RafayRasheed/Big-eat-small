@@ -4,7 +4,7 @@ import {
   View, Text, StatusBar,
   Linking, Platform, ImageBackground, BackHandler,
 } from 'react-native';
-import { MyError, Spacer, StatusBarHide, ios, myHeight, myWidth } from '../common';
+import { MyError, Spacer, StatusBarHide, ios, myHeight, myWidth } from '../../game/common';
 import { myColors } from '../../ultils/myColors';
 import { myFontSize, myFonts, myLetSpacing } from '../../ultils/myFonts';
 import { ItemInfo } from './home.component/item_info';

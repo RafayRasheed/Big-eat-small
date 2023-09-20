@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { View, Text, Keyboard, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import { myColors } from "../../ultils/myColors";
 import { myFontSize, myFonts, myLetSpacing } from "../../ultils/myFonts";
-import { Loader, MyError, Spacer, ios, myHeight, myWidth } from "../common";
+import { Loader, MyError, Spacer, ios, myHeight, myWidth } from "../../game/common";
 
 export const Verification = ({ navigation }) => {
     const lenCode = 4;

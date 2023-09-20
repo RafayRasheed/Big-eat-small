@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Image, ImageBackground, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { Spacer, ios, myHeight, myWidth } from '../common';
+import { Spacer, ios, myHeight, myWidth } from '../../game/common';
 import { myColors } from '../../ultils/myColors';
 import { myFontSize, myFonts, myLetSpacing } from '../../ultils/myFonts';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';

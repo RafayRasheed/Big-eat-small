@@ -1,6 +1,6 @@
 import React from "react"
 import { Text, View, Image, StyleSheet } from "react-native"
-import { Spacer, myHeight, myWidth } from "../../common"
+import { Spacer, myHeight, myWidth } from "../../../game/common"
 import { myFontSize, myFonts, myLetSpacing } from "../../../ultils/myFonts"
 import { myColors } from "../../../ultils/myColors"
 

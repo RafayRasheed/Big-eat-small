@@ -1,5 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
-import { storage } from "../common";
+import { storage } from "../../game/common";
 import { getLogin } from "./storageMMKV";
 
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Image, TouchableOpacity, ScrollView, StyleSheet, Text, View, SafeAreaView } from 'react-native';
-import { Spacer, StatusbarH, myHeight, myWidth, storage } from '../common';
+import { Spacer, StatusbarH, myHeight, myWidth, storage } from '../../game/common';
 import { myColors } from '../../ultils/myColors';
 import { myFontSize, myFonts, myLetSpacing } from '../../ultils/myFonts';
 

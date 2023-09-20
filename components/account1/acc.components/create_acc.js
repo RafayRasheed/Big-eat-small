@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { ios, myHeight, myWidth, Spacer } from "../../common";
+import { ios, myHeight, myWidth, Spacer } from "../../../game/common";
 import { myFontSize, myFonts } from "../../../ultils/myFonts";
 import { myColors } from "../../../ultils/myColors";
 import { Person } from "../../functions/structures";

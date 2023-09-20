@@ -3,7 +3,7 @@ import { View, ScrollView, Text, StyleSheet, Image, TouchableOpacity, TextInput 
 import { myFontSize, myFonts, myLetSpacing } from "../../ultils/myFonts"
 import { myColors } from "../../ultils/myColors"
 import { Categories, offers } from "./home_data";
-import { Spacer, StatusbarH, myHeight, myWidth } from "../common";
+import { Spacer, StatusbarH, myHeight, myWidth } from "../../game/common";
 import { RestaurantInfo } from "./home.component/restaurant_info";
 import { RestaurantInfoFull } from "./home.component/restaurant_info_full";
 

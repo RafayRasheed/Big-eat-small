@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Image, Pressable, TouchableOpacity, SafeAreaView, StyleSheet, Text, View, TextInput } from 'react-native';
 import { myColors } from '../../ultils/myColors';
 import { myFontSize, myFonts, myLetSpacing } from '../../ultils/myFonts';
-import { Spacer, ios, myHeight, myWidth } from '../common';
+import { Spacer, ios, myHeight, myWidth } from '../../game/common';
 import Lottie from 'lottie-react-native';
 
 export const DonePassword = ({ navigation }) => {

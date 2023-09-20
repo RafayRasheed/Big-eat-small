@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { View, Text, Keyboard, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import { myColors } from "../../ultils/myColors";
 import { myFontSize, myFonts, myLetSpacing } from "../../ultils/myFonts";
-import { Loader, MyError, Spacer, errorTime, ios, myHeight, myWidth, storage } from "../common";
+import { Loader, MyError, Spacer, errorTime, ios, myHeight, myWidth, storage } from "../../game/common";
 import firestore from '@react-native-firebase/firestore';
 import { setLogin } from "../functions/storageMMKV";
 import { sendVerficationEmail } from "../functions/email";

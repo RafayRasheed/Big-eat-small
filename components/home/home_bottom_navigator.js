@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from "react";
 import { Text, SafeAreaView, View, Image, StatusBar, StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Spacer, StatusbarH, bottomTab, ios, myHeight, myWidth, storage } from "../common";
+import { Spacer, StatusbarH, bottomTab, ios, myHeight, myWidth, storage } from "../../game/common";
 import { myColors } from "../../ultils/myColors";
 import { myFontSize, myFonts, myLetSpacing } from "../../ultils/myFonts";
 import { ActivityScreen } from "../activity/activity_screen";

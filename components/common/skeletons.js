@@ -1,6 +1,6 @@
 import React from "react";
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import { MyError, Spacer, StatusbarH, ios, myHeight, myWidth } from '../common';
+import { MyError, Spacer, StatusbarH, ios, myHeight, myWidth } from '../../game/common';
 import { myColors } from '../../ultils/myColors';
 import { myFontSize, myFonts, myLetSpacing } from '../../ultils/myFonts';
 

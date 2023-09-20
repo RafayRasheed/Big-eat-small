@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { errorTime, ios, Loader, MyError, myHeight, myWidth, Spacer } from "../common";
+import { errorTime, ios, Loader, MyError, myHeight, myWidth, Spacer } from "../../game/common";
 import { myFontSize, myFonts } from "../../ultils/myFonts";
 import { myColors } from "../../ultils/myColors";
 import { deccodeInfo, encodeInfo } from "../functions/functions";

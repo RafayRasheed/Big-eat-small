@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, ScrollView, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Spacer, myHeight, myWidth } from "../../common"
+import { Spacer, myHeight, myWidth } from "../../../game/common"
 import { myFontSize, myFonts, myLetSpacing } from "../../../ultils/myFonts"
 import { myColors } from "../../../ultils/myColors"
 import { offers } from "../home_data";
@@ -15,7 +15,7 @@ export const Banners = () => {
     // Loop for dots
     for (let j = 0; j < lenOffers; j++) {
         dotArr.push(<View key={j} style={[{
-            height: myHeight(1), width: j == i? myHeight(1.5):myHeight(1),
+            height: myHeight(1), width: j == i ? myHeight(1.5) : myHeight(1),
             margin: 3, borderRadius: myHeight(0.8),
             backgroundColor: j == i ? myColors.primary : myColors.dot,
         }]} />)

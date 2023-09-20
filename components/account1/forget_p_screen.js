@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { errorTime, ios, Loader, MyError, myHeight, myWidth, Spacer, StatusbarH } from "../common";
+import { errorTime, ios, Loader, MyError, myHeight, myWidth, Spacer, StatusbarH } from "../../game/common";
 import { myFontSize, myFonts } from "../../ultils/myFonts";
 import { myColors } from "../../ultils/myColors";
 import firestore from '@react-native-firebase/firestore';
