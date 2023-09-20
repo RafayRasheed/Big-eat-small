@@ -81,16 +81,7 @@ const initialMockInLines = [
 
 
 ]
-const player0Mocks = [
-    { id: '01', player: 0, show: true, size: 0 }, { id: '02', player: 0, show: true, size: 0 }, { id: '03', player: 0, show: true, size: 0 },
-    { id: '04', player: 0, show: true, size: 1 }, { id: '05', player: 0, show: true, size: 1 }, { id: '06', player: 0, show: true, size: 1 },
-    { id: '07', player: 0, show: true, size: 2 }, { id: '08', player: 0, show: true, size: 2 }, { id: '09', player: 0, show: true, size: 2 },
-]
-const player1Mocks = [
-    { id: '11', player: 1, show: true, size: 0 }, { id: '12', player: 1, show: true, size: 0 }, { id: '13', player: 1, show: true, size: 0 },
-    { id: '14', player: 1, show: true, size: 1 }, { id: '15', player: 1, show: true, size: 1 }, { id: '16', player: 1, show: true, size: 1 },
-    { id: '17', player: 1, show: true, size: 2 }, { id: '18', player: 1, show: true, size: 2 }, { id: '19', player: 1, show: true, size: 2 },
-]
+
 const Lines = ({ deg = '0deg' }) => {
     const SingleLine = () => (
         <LinearGradient colors={['#e3b727', '#e6be3e', '#ebc754']}
@@ -113,6 +104,16 @@ const Lines = ({ deg = '0deg' }) => {
     )
 }
 export const Game = ({ navigation }) => {
+    const player0Mocks = [
+        { id: '01', player: 0, show: true, size: 0 }, { id: '02', player: 0, show: true, size: 0 }, { id: '03', player: 0, show: true, size: 0 },
+        { id: '04', player: 0, show: true, size: 1 }, { id: '05', player: 0, show: true, size: 1 }, { id: '06', player: 0, show: true, size: 1 },
+        { id: '07', player: 0, show: true, size: 2 }, { id: '08', player: 0, show: true, size: 2 }, { id: '09', player: 0, show: true, size: 2 },
+    ]
+    const player1Mocks = [
+        { id: '11', player: 1, show: true, size: 0 }, { id: '12', player: 1, show: true, size: 0 }, { id: '13', player: 1, show: true, size: 0 },
+        { id: '14', player: 1, show: true, size: 1 }, { id: '15', player: 1, show: true, size: 1 }, { id: '16', player: 1, show: true, size: 1 },
+        { id: '17', player: 1, show: true, size: 2 }, { id: '18', player: 1, show: true, size: 2 }, { id: '19', player: 1, show: true, size: 2 },
+    ]
     const [change, setChange] = useState(false)
 
     const [mockInLines, setMockInLines] = useState(initialMockInLines)
@@ -140,6 +141,8 @@ export const Game = ({ navigation }) => {
         setIsWinner(false)
         setActivePlayer(0)
         setShowWinnerModal(false)
+        setChange(!change)
+
 
     }
 
@@ -349,6 +352,7 @@ export const Game = ({ navigation }) => {
             }
 
         }
+
         setChange(!change)
         // newArray.map((item) => {
         //     if (item.player == 0) {
@@ -483,7 +487,8 @@ export const Game = ({ navigation }) => {
 
                         {
                             isWinner &&
-                            <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={isWinner.player == 0 ? ['#e88c87', '#de645d', '#e88c87'] : ['#81c1f7', '#5198d3', '#81c1f7']}
+                            <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                                colors={isWinner.player == 0 ? [myColors.player1, '#de645d', '#e88c87'] : [myColors.player2, '#5198d3', '#81c1f7']}
                                 style={[isWinner.style, {
                                     borderRadius: 1000, position: 'absolute',
                                     borderWidth: 0, elevation: 6, zIndex: 100,
