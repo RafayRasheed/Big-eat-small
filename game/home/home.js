@@ -14,13 +14,15 @@ export const Home = ({ navigation }) => {
     const [change, setChange] = useState(false)
 
     function OnStart() {
-        navigation.navigate('Game')
+        // navigation.navigate('Game')
+        navigation.navigate('Game', { playerCount: [0, 0], startPlayer: 0 })
+
     }
 
     return (
         <ImageBackground
             style={{ flex: 1, backgroundColor: 'yellow', paddingHorizontal: myWidth(4), alignItems: 'center', justifyContent: 'space-between' }}
-            source={require('../assets/background2.png')} resizeMode='cover'
+            source={require('../assets/r.png')} resizeMode='cover'
         >
 
             {/* <View>

@@ -9,78 +9,12 @@ import { myColors } from '../../ultils/myColors';
 import { myFontSize, myFonts, myLetSpacing } from '../../ultils/myFonts';
 import LinearGradient from 'react-native-linear-gradient';
 import { MyButton } from '../component/components';
+import { initialMockInLines, initialMockInLines2, player0Mocks, player0Mocks2, player1Mocks, player1Mocks2 } from './data';
 
 const lineContainerSize = myWidth(75)
 const lineWidthSize = lineContainerSize / 20
 const boxSize = (lineContainerSize - (lineWidthSize * 2)) / 3
 const mockSizes = [boxSize / 1.75, boxSize / 1.38, boxSize / 1.05]
-const initialMockInLines = [
-    {
-        id: '00',
-        player: null,
-        size: null,
-        posX: 0,
-        posY: 0,
-    },
-    {
-        id: '01',
-        player: null,
-        size: null,
-        posX: 0,
-        posY: 1,
-    },
-    {
-        id: '02',
-        player: null,
-        size: null,
-        posX: 0,
-        posY: 2,
-    },
-    {
-        id: '10',
-        player: null,
-        size: null,
-        posX: 1,
-        posY: 0,
-    },
-    {
-        id: '11',
-        player: null,
-        size: null,
-        posX: 1,
-        posY: 1,
-    },
-    {
-        id: '12',
-        player: null,
-        size: null,
-        posX: 1,
-        posY: 2,
-    },
-    {
-        id: '20',
-        player: null,
-        size: null,
-        posX: 2,
-        posY: 0,
-    },
-    {
-        id: '21',
-        player: null,
-        size: null,
-        posX: 2,
-        posY: 1,
-    },
-    {
-        id: '22',
-        player: null,
-        size: null,
-        posX: 2,
-        posY: 2,
-    },
-
-
-]
 
 const Lines = ({ deg = '0deg' }) => {
     const SingleLine = () => (
@@ -103,40 +37,85 @@ const Lines = ({ deg = '0deg' }) => {
         </View>
     )
 }
+
+function generateMockInLines() {
+    let iniMock = []
+    let ini0 = []
+    let ini1 = []
+    let count = 0
+    for (let x = 0; x < 3; x++) {
+        for (let y = 0; y < 3; y++) {
+            count += 1
+            const id = x.toString() + y.toString()
+            const idM1 = '0' + count.toString()
+            const idM2 = '1' + count.toString()
+            const l = {
+                id,
+                player: null,
+                size: null,
+                posX: x,
+                posY: y,
+            }
+            const m1 = { id: idM1, player: 0, show: true, size: x }
+            const m2 = { id: idM2, player: 1, show: true, size: x }
+            iniMock.push(l)
+            ini0.push(m1)
+            ini1.push(m2)
+        }
+    }
+    return { iniMock, ini0, ini1 }
+}
+function generatePlayerZeroMocks() {
+    let array = []
+    for (let x = 0; x < 3; x++) {
+        for (let y = 0; y < 3; y++) {
+            const l = {
+                id: x.toString() + y.toString(),
+                player: null,
+                size: null,
+                posX: x,
+                posY: y,
+            }
+            array.push(l)
+        }
+    }
+    return array
+}
 export const Game = ({ navigation }) => {
-    const player0Mocks = [
-        { id: '01', player: 0, show: true, size: 0 }, { id: '02', player: 0, show: true, size: 0 }, { id: '03', player: 0, show: true, size: 0 },
-        { id: '04', player: 0, show: true, size: 1 }, { id: '05', player: 0, show: true, size: 1 }, { id: '06', player: 0, show: true, size: 1 },
-        { id: '07', player: 0, show: true, size: 2 }, { id: '08', player: 0, show: true, size: 2 }, { id: '09', player: 0, show: true, size: 2 },
-    ]
-    const player1Mocks = [
-        { id: '11', player: 1, show: true, size: 0 }, { id: '12', player: 1, show: true, size: 0 }, { id: '13', player: 1, show: true, size: 0 },
-        { id: '14', player: 1, show: true, size: 1 }, { id: '15', player: 1, show: true, size: 1 }, { id: '16', player: 1, show: true, size: 1 },
-        { id: '17', player: 1, show: true, size: 2 }, { id: '18', player: 1, show: true, size: 2 }, { id: '19', player: 1, show: true, size: 2 },
-    ]
+
     const [change, setChange] = useState(false)
 
-    const [mockInLines, setMockInLines] = useState(initialMockInLines)
-    const [playerZeroMocks, setPlayerZeroMocks] = useState(player0Mocks)
-    const [playerOneMocks, setPlayerOneMocks] = useState(player1Mocks)
+    const [mockInLines, setMockInLines] = useState([])
+    const [playerZeroMocks, setPlayerZeroMocks] = useState([])
+    const [playerOneMocks, setPlayerOneMocks] = useState([])
     const [current, setCurrent] = useState(null)
     const [playerCount, setPlayerCount] = useState([0, 0])
     const [isWinner, setIsWinner] = useState(false)
     const [winnerModal, setShowWinnerModal] = useState(false)
     const [activePlayer, setActivePlayer] = useState(0)
+    useEffect(() => {
+        const { iniMock, ini0, ini1 } = generateMockInLines()
+        setMockInLines(iniMock)
+        setPlayerZeroMocks(ini0)
+        setPlayerOneMocks(ini1)
+    }, [])
 
     useEffect(() => {
+
         if (isWinner != false) {
             setTimeout(() => {
                 setShowWinnerModal(true)
+                // navigation.replace('Winner', { playerCount, startPlayer: 1 })
+
                 // Alert.alert('show modal')
             }, 500)
         }
     }, [isWinner])
     function refresh() {
-        setMockInLines(initialMockInLines)
-        setPlayerZeroMocks(player0Mocks)
-        setPlayerOneMocks(player1Mocks)
+        const { iniMock, ini0, ini1 } = generateMockInLines()
+        setMockInLines(iniMock)
+        setPlayerZeroMocks(ini0)
+        setPlayerOneMocks(ini1)
         setCurrent(null)
         setIsWinner(false)
         setActivePlayer(0)
@@ -395,7 +374,8 @@ export const Game = ({ navigation }) => {
                 <View style={{ flex: 1, justifyContent: 'space-between', }}>
                     {/* Player 0 Portion */}
                     <View style={{
-                        borderBottomWidth: 5,
+                        borderBottomWidth: 5, paddingBottom: myHeight(1),
+
                         borderColor: activePlayer == 0 ? myColors.player1 : '#00000030',
                         backgroundColor: activePlayer == 0 ? myColors.player1 + '25' : '#00000005',
                     }}>
@@ -499,7 +479,8 @@ export const Game = ({ navigation }) => {
                     </View>
                     {/* Player 1 Portion */}
                     <View style={{
-                        borderTopWidth: 5,
+                        borderTopWidth: 5, paddingTop: myHeight(1),
+
                         borderColor: activePlayer == 1 ? myColors.player2 : '#00000020',
                         backgroundColor: activePlayer == 1 ? myColors.player2 + '35' : '#00000010',
 
