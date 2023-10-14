@@ -3,11 +3,14 @@ import { createStackNavigator } from "@react-navigation/stack"
 import { Game } from "./home/game"
 import { Home } from "./home/home"
 import { Winner } from "./home/Winner"
+import { useLayoutEffect } from "react"
+import { GameNavigator } from "./game_navigator"
 
 
 const AppTAB = createStackNavigator()
 
-export const AppNavigator = () => {
+export const AppNavigator = ({ navigation, route }) => {
+
     return (
         <NavigationContainer>
             <AppTAB.Navigator
@@ -18,9 +21,8 @@ export const AppNavigator = () => {
                     headerShown: false,
                 }}
             >
-                <AppTAB.Screen component={Home} name="Home" />
-                <AppTAB.Screen component={Game} name="Game" />
-                <AppTAB.Screen component={Winner} name="Winner" />
+                <AppTAB.Screen component={GameNavigator} name="GameNavigator" />
+
 
 
             </AppTAB.Navigator>

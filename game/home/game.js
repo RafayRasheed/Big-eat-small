@@ -2,14 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
     ScrollView, StyleSheet, TouchableOpacity, Image,
     View, Text, StatusBar, TextInput,
-    Linking, Platform, ImageBackground, SafeAreaView, Alert,
+    Linking, Platform, ImageBackground, SafeAreaView, Alert, BackHandler,
 } from 'react-native';
 import { MyError, Spacer, StatusbarH, ios, myHeight, myWidth } from '../../game/common';
 import { myColors } from '../../ultils/myColors';
 import { myFontSize, myFonts, myLetSpacing } from '../../ultils/myFonts';
 import LinearGradient from 'react-native-linear-gradient';
-import { MyButton } from '../component/components';
+import { MyButton, YesNoModal, playSound } from '../component/components';
 import { initialMockInLines, initialMockInLines2, player0Mocks, player0Mocks2, player1Mocks, player1Mocks2 } from './data';
+import SoundPlayer from 'react-native-sound-player';
+import { useFocusEffect } from '@react-navigation/native';
 
 const lineContainerSize = myWidth(75)
 const lineWidthSize = lineContainerSize / 20
@@ -38,6 +40,7 @@ const Lines = ({ deg = '0deg' }) => {
     )
 }
 
+
 function generateMockInLines() {
     let iniMock = []
     let ini0 = []
@@ -65,50 +68,87 @@ function generateMockInLines() {
     }
     return { iniMock, ini0, ini1 }
 }
-function generatePlayerZeroMocks() {
-    let array = []
-    for (let x = 0; x < 3; x++) {
-        for (let y = 0; y < 3; y++) {
-            const l = {
-                id: x.toString() + y.toString(),
-                player: null,
-                size: null,
-                posX: x,
-                posY: y,
-            }
-            array.push(l)
-        }
-    }
-    return array
-}
-export const Game = ({ navigation }) => {
 
+export const Game = ({ navigation }) => {
     const [change, setChange] = useState(false)
 
     const [mockInLines, setMockInLines] = useState([])
     const [playerZeroMocks, setPlayerZeroMocks] = useState([])
     const [playerOneMocks, setPlayerOneMocks] = useState([])
     const [current, setCurrent] = useState(null)
+    const [lastPlayer, setLastPlayer] = useState(0)
+
     const [playerCount, setPlayerCount] = useState([0, 0])
     const [isWinner, setIsWinner] = useState(false)
+
     const [winnerModal, setShowWinnerModal] = useState(false)
-    const [activePlayer, setActivePlayer] = useState(0)
+    const [activePlayer, setActivePlayer] = useState(lastPlayer)
+    const [showYesNoModal, setShowYesNoModal] = useState(false)
+
+    useFocusEffect(
+        React.useCallback(() => {
+
+            BackHandler.addEventListener(
+                'hardwareBackPress', onBackPress
+            );
+            return () =>
+                BackHandler.removeEventListener(
+                    'hardwareBackPress', onBackPress
+                );
+        }, [showYesNoModal])
+    );
+    const onBackPress = () => {
+        if (showYesNoModal) {
+            setShowYesNoModal(false)
+
+            return true
+
+        }
+        setShowYesNoModal(true)
+        return true
+    };
+    function onCancel() {
+        playSound('click')
+
+        setShowYesNoModal(false)
+    }
+    function onOK() {
+        playSound('click')
+
+        onExit()
+
+    }
+
     useEffect(() => {
         const { iniMock, ini0, ini1 } = generateMockInLines()
         setMockInLines(iniMock)
         setPlayerZeroMocks(ini0)
         setPlayerOneMocks(ini1)
+
     }, [])
 
     useEffect(() => {
 
         if (isWinner != false) {
+            if (isWinner == null) {
+                setTimeout(() => {
+                    playSound('game')
+
+                }, 100)
+                setLastPlayer(lastPlayer == 0 ? 1 : 0)
+
+            }
+            else {
+                playSound('win')
+                setLastPlayer(isWinner.player)
+
+            }
             setTimeout(() => {
                 setShowWinnerModal(true)
                 // navigation.replace('Winner', { playerCount, startPlayer: 1 })
 
                 // Alert.alert('show modal')
-            }, 500)
+            }, 1000)
         }
     }, [isWinner])
     function refresh() {
@@ -117,8 +157,8 @@ export const Game = ({ navigation }) => {
         setPlayerZeroMocks(ini0)
         setPlayerOneMocks(ini1)
         setCurrent(null)
+        setActivePlayer(lastPlayer)
         setIsWinner(false)
-        setActivePlayer(0)
         setShowWinnerModal(false)
         setChange(!change)
 
@@ -247,7 +287,6 @@ export const Game = ({ navigation }) => {
 
             }
         })
-        console.log(morePlay)
 
         return morePlay
     }
@@ -265,7 +304,6 @@ export const Game = ({ navigation }) => {
 
         const newArray = mockInLines
         newArray[index] = newItem
-
         if (current.player == 0) {
             playerZeroMocks[current.index].show = false
             setPlayerZeroMocks(playerZeroMocks)
@@ -287,6 +325,7 @@ export const Game = ({ navigation }) => {
             playerCount[win.player] = playerCount[win.player] + 1
             setPlayerCount(playerCount)
             setIsWinner(win)
+
             return
 
         }
@@ -308,6 +347,7 @@ export const Game = ({ navigation }) => {
             }
             else {
                 setIsWinner(null)
+                return
             }
         }
         else {
@@ -328,46 +368,39 @@ export const Game = ({ navigation }) => {
             }
             else {
                 setIsWinner(null)
+                return
             }
 
         }
+        playSound('place')
 
         setChange(!change)
-        // newArray.map((item) => {
-        //     if (item.player == 0) {
-        //         playerZero.push(item)
-        //     }
-        //     else if (item.player == 1) {
-        //         playerOne.push(item)
-
-        //     }
-        // })
-        // console.log('player 0')
-        // playerZero.map(({ player, posX, posY }) => {
-        //     console.log(posX, posY)
-        // })
-        // console.log('player 1')
-        // playerOne.map(({ player, posX, posY }) => {
-        //     console.log(posX, posY)
-        // })
-        // setChange(!change)
-
 
     }
     // 00 01 02
     // 00 10 20
     function onPlayAgain() {
+        playSound('click')
+
         refresh()
-        Alert.alert('ref')
+
     }
 
     function onExit() {
-        navigation.goBack()
+        playSound('click')
+        setTimeout(() => {
+
+            navigation.goBack()
+        }, 50)
     }
     return (
         <>
             <ImageBackground
-                style={{ flex: 1, backgroundColor: 'yellow', alignItems: 'center' }}
+                style={{
+                    flex: 1,
+                    //  backgroundColor: 'yellow',
+                    alignItems: 'center'
+                }}
                 source={require('../assets/background.png')} resizeMode='cover'
             >
                 <StatusbarH />
@@ -387,7 +420,7 @@ export const Game = ({ navigation }) => {
 
                             {
                                 playerZeroMocks.map((mock, index) => {
-                                    const active = (activePlayer == mock.player) && mock.size != null
+                                    const active = (activePlayer == mock.player) && mock.show != false
                                     return (
                                         <TouchableOpacity key={index} activeOpacity={active ? 0.7 : 1}
                                             style={{
@@ -395,7 +428,9 @@ export const Game = ({ navigation }) => {
                                                 transform: [{ rotate: mock.id == current?.id ? '25deg' : '0deg' }]
                                             }} onPress={() => {
                                                 if (active) {
-                                                    setCurrent({ ...mock, index })
+                                                    setCurrent(current ? null : { ...mock, index })
+                                                } else if (activePlayer != mock.player && mock.show != false) {
+                                                    playSound('wrong')
                                                 }
                                             }}>
                                             <View style={{ width: mockSizes[mock.size] / 1.2, height: mockSizes[mock.size] / 1.2 }}>
@@ -426,6 +461,7 @@ export const Game = ({ navigation }) => {
                         {
                             mockInLines.map((item, index) => {
                                 const isActive = current != null && (item.size == null || item.size < current?.size)
+
                                 return (
                                     <TouchableOpacity activeOpacity={isActive ? 0.7 : 1}
 
@@ -439,6 +475,9 @@ export const Game = ({ navigation }) => {
                                         onPress={() => {
                                             if (isActive) {
                                                 addMock(item, index, current?.player, current?.size)
+                                            }
+                                            else {
+                                                playSound('wrong')
                                             }
 
                                         }}
@@ -493,7 +532,8 @@ export const Game = ({ navigation }) => {
 
                             {
                                 playerOneMocks.map((mock, index) => {
-                                    const active = (activePlayer == mock.player) && mock.size != null
+                                    const active = (activePlayer == mock.player) && mock.show != false
+
                                     return (
                                         <TouchableOpacity key={index} activeOpacity={active ? 0.7 : 1}
                                             style={{
@@ -501,8 +541,11 @@ export const Game = ({ navigation }) => {
                                                 transform: [{ rotate: mock.id == current?.id ? '25deg' : '0deg' }]
                                             }} onPress={() => {
                                                 if (active) {
-                                                    setCurrent({ ...mock, index })
+                                                    setCurrent(current ? null : { ...mock, index })
+                                                } else if (activePlayer != mock.player && mock.show != false) {
+                                                    playSound('wrong')
                                                 }
+
                                             }}>
                                             <View style={{ width: mockSizes[mock.size] / 1.2, height: mockSizes[mock.size] / 1.2 }}>
 
@@ -523,29 +566,13 @@ export const Game = ({ navigation }) => {
                 </View>
 
             </ImageBackground>
-            {/* {
-                <LinearGradient colors={[myColors.yellow3, myColors.yellow4,]}
-                    style={{
-                        position: 'absolute', height: '100%', width: '100%',
-                        alignItems: 'center', paddingHorizontal: myWidth(4)
-                    }}>
-                    <StatusbarH />
-                    <Spacer paddingT={myHeight(5)} />
-                    <Text style={[styles.textCommon,
-                    {
-                        fontSize: myFontSize.large, fontFamily: myFonts.heading,
-
-                    }]}>{'Match Drawn'}</Text>
-
-                </LinearGradient>
-            } */}
 
             {
                 winnerModal &&
 
                 <View style={{
                     position: 'absolute', height: '100%', width: '100%',
-                    zIndex: 10000,
+                    zIndex: 10,
                 }}>
 
 
@@ -611,7 +638,7 @@ export const Game = ({ navigation }) => {
                         </View>
 
                         <Spacer paddingT={myHeight(5)} />
-                        <MyButton text={'Play Again'} size={myWidth(50)} fun={refresh} />
+                        <MyButton text={'Play Again'} size={myWidth(50)} fun={onPlayAgain} />
                         <Spacer paddingT={myHeight(1.5)} />
                         <MyButton text={'Exit'} size={myWidth(50)} fun={onExit} />
 
@@ -646,6 +673,12 @@ export const Game = ({ navigation }) => {
                 </View>
 
             }
+
+            {
+                showYesNoModal &&
+                <YesNoModal yesFun={onOK} noFun={onCancel} text='Are You Sure You Want To Exit The Game' />
+            }
+
 
         </>
     )
