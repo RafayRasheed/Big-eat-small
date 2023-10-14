@@ -1,4 +1,4 @@
-package com.myfoodapp;
+package com.bigeatsmall;
 
 import android.content.Intent;
 import android.os.Bundle;
