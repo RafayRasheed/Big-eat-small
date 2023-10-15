@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "890830070498",
-    "project_id": "foodapp-edd7e",
-    "storage_bucket": "foodapp-edd7e.appspot.com"
+    "project_number": "843043456043",
+    "project_id": "big-eat-small-7c82a",
+    "storage_bucket": "big-eat-small-7c82a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:890830070498:android:628093f0e436bed99474bb",
+        "mobilesdk_app_id": "1:843043456043:android:4c9ad89c2cf5f334d0966e",
         "android_client_info": {
           "package_name": "com.bigeatsmall"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "890830070498-anr6k9ot21biaqusk2mp9diancoj0bhm.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBJqqXsgun1szmDuue6-vf0-qzI2TgdqkM"
+          "current_key": "AIzaSyB1A39uDGlCT5k29KKggiyyFtYV6wW4xL0"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "890830070498-anr6k9ot21biaqusk2mp9diancoj0bhm.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
