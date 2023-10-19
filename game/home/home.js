@@ -152,7 +152,7 @@ export const Home = ({ navigation, route }) => {
                     </View>
                     <Spacer paddingT={myHeight(2)} />
                     <ImageBackground
-                        style={{ height: myWidth(88) / 2, width: myWidth(88), justifyContent: 'center', alignSelf: 'center' }}
+                        style={{ height: myWidth(88) / 2.1, width: myWidth(88), justifyContent: 'center', alignSelf: 'center' }}
                         source={require('../assets/board.png')} resizeMode='contain'
                     >
                         <MyDoubleText text='Tic Tac Toe' frontColor={myColors.wood} />
