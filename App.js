@@ -26,7 +26,7 @@ export default function App() {
 
     database()
       .ref(`/game/playing`)
-      .orderByKey()
+      // .orderByKey()
       .once('value')
       .then(snapshot => {
         let s = 0
@@ -34,22 +34,33 @@ export default function App() {
         let deleted = []
         snapshot.forEach(documentSnapshot1 => {
           const order = documentSnapshot1.val()
-          if (order.active) {
-            s += 2
-          } else {
-            s += 1
-          }
-          if (found) {
-            return
-          }
+          const s1 = new Date(order.active)
+          const s2 = new Date()
+          const time = (((s2 - s1) / 1000) / 60).toFixed(2)
 
-          if (!order.player1) {
+          console.log(time)
+          if (time > 2) {
+
             deleted.push(documentSnapshot1.key)
             return
           }
-          if (!order.player2) {
+
+          // if (found) {
+          //   return
+          // }
+
+          if (order.player1) {
+            s += 1
+
+          }
+          if (order.player2) {
+            s += 1
+            return
+          }
+          if (!order.player2 && time < 1 && !found) {
             found = documentSnapshot1.key
             return
+
           }
 
         });
@@ -95,13 +106,13 @@ export default function App() {
     KeepAwake.activate();
     // console.log(getDateInt(new Date()))
     Yes()
-
-
+    // const s = new Date().toString()
+    // database()
     //   .ref(`/game/playing`).child(getDateInt(new Date()))
     //   .set({
-    //     player1: 'rafay6',
-    //     player2: 'rafay7',
-    //     active: true
+    //     player1: 'rafay5',
+    //     player2: 'rafay6',
+    //     active: s,
     //   }).then(() => {
     //     // console.log('Han Ustaad Hogaya', d)
 
