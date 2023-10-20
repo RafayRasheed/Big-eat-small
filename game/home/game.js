@@ -113,7 +113,8 @@ export const Game = ({ navigation }) => {
         setShowYesNoModal(false)
     }
     function onOK() {
-        playSound('click')
+        // Alert.alert('sdg')
+        // playSound('click')
 
         onExit()
 
@@ -391,7 +392,7 @@ export const Game = ({ navigation }) => {
         setTimeout(() => {
 
             navigation.goBack()
-        }, 50)
+        }, 800)
     }
     return (
         <>
