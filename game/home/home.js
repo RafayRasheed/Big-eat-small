@@ -16,14 +16,152 @@ import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useSelector, useDispatch } from 'react-redux'
 import { setMute } from '../../redux/states_reducer';
 import { getMuteStorage } from '../storageFun';
+import database from '@react-native-firebase/database';
 
 export const Home = ({ navigation, route }) => {
     const [showYesNoModal, setShowYesNoModal] = useState(false)
+    const [ID, SetID] = useState(null)
     const { mute } = useSelector(state => state.GameStates)
     const dispatch = useDispatch()
     const appState = useRef(AppState.currentState);
 
+    function Yes() {
+
+        database()
+            .ref(`/game/playing`)
+            // .orderByKey()
+            .once('value')
+            .then(snapshot => {
+                let s = 0
+                let found = null
+                let deleted = []
+                snapshot.forEach(documentSnapshot1 => {
+                    const order = documentSnapshot1.val()
+                    const s1 = new Date(order.active)
+                    const s2 = new Date().toUTCString()
+                    const s3 = new Date(s2)
+                    const time = (((s3 - s1) / 1000) / 60).toFixed(2)
+                    console.log(time)
+
+                    if (time > 2) {
+
+                        deleted.push(documentSnapshot1.key)
+                        return
+                    }
+
+                    // if (found) {
+                    //   return
+                    // }
+
+                    if (order.player1) {
+                        s += 1
+
+                    }
+                    // console.log(order.player2, time, found)
+                    if (order.player2) {
+                        s += 1
+                        return
+                    }
+
+                    if (!order.player2 && time < 0.5 && !found) {
+                        found = documentSnapshot1.key
+                        return
+
+                    }
+
+                });
+                console.log('Players Online', s)
+                console.log('Player Game', found)
+                console.log('Deleted Game', deleted)
+
+                if (found) {
+                    const s = new Date().toUTCString()
+
+                    database()
+                        .ref(`/game/playing`).child(found).update({
+                            player2: 'Rafay2',
+                            active: s,
+                        }).then(() => {
+                            navigation.navigate('Game', { gameID: found, myPlayer: 1 })
+
+                        })
+                }
+                else {
+                    const i = getDateInt(new Date())
+                    const s = new Date().toUTCString()
+                    database()
+                        .ref(`/game/playing`).child(i)
+                        .set({
+                            player1: 'Rafay',
+                            active: s,
+                        }).then(() => {
+                            SetID(i)
+                            // navigation.navigate('Game', { gameID: i, myPlayer: 0 })
+
+                            console.log('Han Naya Game')
+
+                        })
+                        .catch((er) => {
+                            console.log('Error on  Naya Game', er)
+
+                        })
+                }
+
+                deleted.map(val => {
+                    database()
+                        .ref(`/game/playing`).child(val).remove()
+                })
+
+            })
+            .catch((er) => {
+                console.log('Error on set order', er)
+
+            });
+
+    }
+    function getDateInt(date) {
+        const adjustSting = function (string, size) {
+            const len = string.length
+            let myStr = ''
+            for (let i = 0; i < size - len; i++) {
+                myStr += '0'
+            }
+            return (myStr + string)
+
+        }
+        const randomcode = Math.floor(Math.random() * 899999 + 100000)
+
+        const year = adjustSting(date.getUTCFullYear().toString(), 2)
+        const month = adjustSting(date.getUTCMonth().toString(), 2)
+        const day = adjustSting(date.getUTCDate().toString(), 2)
+        const hours = adjustSting(date.getUTCHours().toString(), 2)
+        const minutes = adjustSting(date.getUTCMinutes().toString(), 2)
+        const seconds = adjustSting(date.getUTCSeconds().toString(), 2)
+        const mili = adjustSting(date.getUTCMilliseconds().toString(), 3)
+        const code = year + month + day + hours + minutes + seconds + mili + randomcode
+
+        return code
+
+
+    }
+
     useEffect(() => {
+
+        if (ID) {
+            database()
+                .ref(`/game/playing`).child(ID).on('value', snapshot => {
+                    const s = snapshot.val()
+                    // console.log('User data: ', );
+                    if (s.player2) {
+                        navigation.navigate('Game', { gameID: ID, myPlayer: 0 })
+                    }
+                });
+        }
+    }, [ID])
+
+    useEffect(() => {
+        // Yes()
+
         const subscription = AppState.addEventListener('change', nextAppState => {
 
 
@@ -83,11 +221,11 @@ export const Home = ({ navigation, route }) => {
     function OnStart() {
         // navigation.navigate('Game')
         playSound('click')
+        Yes()
+        // setTimeout(() => {
+        //     navigation.navigate('Game', { playerCount: [0, 0], startPlayer: 0 })
 
-        setTimeout(() => {
-            navigation.navigate('Game', { playerCount: [0, 0], startPlayer: 0 })
-
-        }, 40)
+        // }, 40)
 
 
     }
@@ -152,7 +290,7 @@ export const Home = ({ navigation, route }) => {
                     </View>
                     <Spacer paddingT={myHeight(2)} />
                     <ImageBackground
-                        style={{ height: myWidth(88) / 2.1, width: myWidth(88), justifyContent: 'center', alignSelf: 'center' }}
+                        style={{ height: myWidth(88) / 2.22, width: myWidth(88), justifyContent: 'center', alignSelf: 'center' }}
                         source={require('../assets/board.png')} resizeMode='contain'
                     >
                         <MyDoubleText text='Tic Tac Toe' frontColor={myColors.wood} />

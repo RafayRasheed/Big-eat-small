@@ -71,7 +71,7 @@ export const MyButtonCircle = ({ size = 0, image, imageSize = myHeight(3), fun }
 }
 export const MyDoubleText = ({
     frontColor = myColors.wood, backColor = 'black', text = '',
-    fontSize = myFontSize.large * 1.15, fontFamily = myFonts.headingBold,
+    fontSize = myFontSize.large * 1.1, fontFamily = myFonts.headingBold,
     pos = 3.5
 
 }) => {
@@ -122,7 +122,7 @@ export const YesNoModal = ({ yesFun, noFun, text = '' }) => {
                         height: myWidth(90) / 2, width: myWidth(90),
 
                     }}
-                    source={require('../assets/board.png')} resizeMode='contain'
+                    source={require('../assets/board1.png')} resizeMode='contain'
                 >
                     <Spacer paddingT={myHeight(1)} />
                     <View style={{ flex: 1, width: '100%', justifyContent: 'center', }}>

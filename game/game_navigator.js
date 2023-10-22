@@ -8,6 +8,7 @@ import { playBackground, playSound } from "./component/components"
 import { useDispatch, useSelector } from "react-redux"
 import { setMute } from "../redux/states_reducer"
 import { getMuteStorage } from "./storageFun"
+import { GameOnline } from "./home/gameOnline"
 
 
 const AppTAB = createStackNavigator()
@@ -40,7 +41,9 @@ export const GameNavigator = ({ navigation, route }) => {
             }}
         >
             <AppTAB.Screen component={Home} name="Home" />
-            <AppTAB.Screen component={Game} name="Game" />
+            {/* <AppTAB.Screen component={Game} name="Game" /> */}
+            <AppTAB.Screen component={GameOnline} name="Game" />
+
             <AppTAB.Screen component={Winner} name="Winner" />
 
 

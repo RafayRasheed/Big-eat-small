@@ -12,6 +12,7 @@ import { MyButton, YesNoModal, playSound } from '../component/components';
 import { initialMockInLines, initialMockInLines2, player0Mocks, player0Mocks2, player1Mocks, player1Mocks2 } from './data';
 import SoundPlayer from 'react-native-sound-player';
 import { useFocusEffect } from '@react-navigation/native';
+import database from '@react-native-firebase/database';
 
 const lineContainerSize = myWidth(75)
 const lineWidthSize = lineContainerSize / 20
@@ -69,7 +70,9 @@ function generateMockInLines() {
     return { iniMock, ini0, ini1 }
 }
 
-export const Game = ({ navigation }) => {
+export const GameOnline = ({ navigation, route }) => {
+    const { gameID = null, myPlayer = null } = route.params
+    console.log(gameID, myPlayer)
     const [change, setChange] = useState(false)
 
     const [mockInLines, setMockInLines] = useState([])
@@ -84,6 +87,20 @@ export const Game = ({ navigation }) => {
     const [winnerModal, setShowWinnerModal] = useState(false)
     const [activePlayer, setActivePlayer] = useState(lastPlayer)
     const [showYesNoModal, setShowYesNoModal] = useState(false)
+
+    function updateData(data) {
+        const s = new Date().toUTCString()
+
+        database()
+            .ref(`/game/playing`).child(gameID).update({
+                game: data,
+                active: s,
+            })
+    }
+    useEffect(() => {
+        // const data = { mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer }
+        // updateData(data)
+    }, [mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer])
 
     useFocusEffect(
         React.useCallback(() => {
@@ -120,13 +137,64 @@ export const Game = ({ navigation }) => {
 
     }
 
+    const updateAllStates = ({ mockInLines = mockInLines, playerZeroMocks = playerZeroMocks,
+        playerOneMocks = playerOneMocks, current = current,
+        lastPlayer = lastPlayer, playerCount = playerCount, winnerModal = winnerModal,
+        activePlayer = activePlayer }) => {
+
+        setMockInLines(mockInLines)
+        setPlayerZeroMocks(playerZeroMocks)
+        setPlayerOneMocks(playerOneMocks)
+        setCurrent(current)
+        setLastPlayer(lastPlayer)
+        setPlayerCount(playerCount)
+        setIsWinner(winnerModal)
+        setShowWinnerModal(winnerModal)
+        setActivePlayer(activePlayer)
+
+    }
+
+
     useEffect(() => {
+
         const { iniMock, ini0, ini1 } = generateMockInLines()
         setMockInLines(iniMock)
         setPlayerZeroMocks(ini0)
         setPlayerOneMocks(ini1)
 
+        database().ref(`/game/playing`).child(gameID).on('value', snapshot => {
+            const val = snapshot.val()
+            const game = val.game
+            console.log('User data: ', game);
+
+            if (game) {
+                const { mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer } = game
+                // console.log('game', game.mockInLines == undefined)
+
+                setMockInLines(mockInLines == undefined ? [] : mockInLines)
+                // setPlayerZeroMocks(playerZeroMocks)
+                // setPlayerOneMocks(playerOneMocks)
+                // setCurrent(current)
+                // setLastPlayer(lastPlayer)
+                // setPlayerCount(playerCount)
+                // setIsWinner(winnerModal)
+                // setShowWinnerModal(winnerModal)
+                // setActivePlayer(activePlayer)
+            }
+            else {
+                const data = { mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer }
+                updateData(data)
+            }
+        })
+
+        // return () => {
+        //     database().ref(`/game/playing`).child(gameID).off('value', onValueChange)
+        //     console.log('dfg')
+        // }
+
+
     }, [])
+
 
     useEffect(() => {
 
@@ -392,7 +460,7 @@ export const Game = ({ navigation }) => {
         setTimeout(() => {
 
             navigation.goBack()
-        }, 800)
+        }, 0)
     }
 
     const Goots = ({ }) => {
@@ -427,9 +495,10 @@ export const Game = ({ navigation }) => {
 
                             {
                                 playerZeroMocks.map((mock, index) => {
-                                    const active = (activePlayer == mock.player) && mock.show != false
+                                    const active = (0 == myPlayer) && (activePlayer == mock.player) && mock.show != false
                                     return (
-                                        <TouchableOpacity key={index} activeOpacity={active ? 0.7 : 1}
+                                        <TouchableOpacity
+                                            key={index} activeOpacity={active ? 0.7 : 1}
                                             style={{
                                                 flexBasis: '16%', marginTop: myHeight(0.5),
                                                 transform: [{ rotate: mock.id == current?.id ? '25deg' : '0deg' }]
@@ -540,7 +609,7 @@ export const Game = ({ navigation }) => {
 
                             {
                                 playerOneMocks.map((mock, index) => {
-                                    const active = (activePlayer == mock.player) && mock.show != false
+                                    const active = (1 == myPlayer) && (activePlayer == mock.player) && mock.show != false
 
                                     return (
                                         <TouchableOpacity key={index} activeOpacity={active ? 0.7 : 1}
