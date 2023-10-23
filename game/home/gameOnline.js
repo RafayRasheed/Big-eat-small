@@ -72,7 +72,6 @@ function generateMockInLines() {
 
 export const GameOnline = ({ navigation, route }) => {
     const { gameID = null, myPlayer = null } = route.params
-    console.log(gameID, myPlayer)
     const [change, setChange] = useState(false)
 
     const [mockInLines, setMockInLines] = useState([])
@@ -90,17 +89,17 @@ export const GameOnline = ({ navigation, route }) => {
 
     function updateData(data) {
         const s = new Date().toUTCString()
+        const dataUse = { mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer }
 
         database()
             .ref(`/game/playing`).child(gameID).update({
-                game: data,
+                game: data ? data : dataUse,
                 active: s,
             })
     }
-    useEffect(() => {
-        // const data = { mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer }
-        // updateData(data)
-    }, [mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer])
+    // useEffect(() => {
+    //     updateData(data)
+    // }, [mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer])
 
     useFocusEffect(
         React.useCallback(() => {
@@ -163,28 +162,51 @@ export const GameOnline = ({ navigation, route }) => {
         setPlayerOneMocks(ini1)
 
         database().ref(`/game/playing`).child(gameID).on('value', snapshot => {
-            const val = snapshot.val()
-            const game = val.game
-            console.log('User data: ', game);
+            if (snapshot) {
 
-            if (game) {
-                const { mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer } = game
-                // console.log('game', game.mockInLines == undefined)
+                const val = snapshot.val()
+                const game = val.game
+                // console.log('User data: ', game);
 
-                setMockInLines(mockInLines == undefined ? [] : mockInLines)
-                // setPlayerZeroMocks(playerZeroMocks)
-                // setPlayerOneMocks(playerOneMocks)
-                // setCurrent(current)
-                // setLastPlayer(lastPlayer)
-                // setPlayerCount(playerCount)
-                // setIsWinner(winnerModal)
-                // setShowWinnerModal(winnerModal)
-                // setActivePlayer(activePlayer)
+                if (game) {
+                    // const mockInLinesO = mockInLines
+                    // const playerZeroMocksO = playerZeroMocks
+                    // const playerOneMocksO = playerOneMocks
+                    // const currentO = current
+                    // const lastPlayerO = lastPlayer
+                    // const playerCountO = playerCount
+                    // const winnerModalO = winnerModal
+                    // const activePlayerO = activePlayer
+
+                    const { mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer } = game
+                    console.log('mockInLinesO', mockInLines)
+
+                    // console.log('game', game.mockInLines == undefined)
+
+                    setMockInLines([...mockInLines])
+                    setPlayerZeroMocks([...playerZeroMocks])
+                    setPlayerOneMocks([...playerOneMocks])
+                    setCurrent(current)
+                    setLastPlayer(lastPlayer)
+                    setPlayerCount(playerCount)
+                    setIsWinner(winnerModal)
+                    setShowWinnerModal(winnerModal)
+                    setActivePlayer(activePlayer)
+                }
+                else {
+                    const data = { current, lastPlayer, playerCount, winnerModal, activePlayer }
+                    data.mockInLines = iniMock
+                    data.playerZeroMocks = ini0
+                    data.playerOneMocks = ini1
+
+                    // console.log('mockInLines', mockInLines)
+
+                    updateData(data)
+                }
+            } else {
+                console.log('No Snapshot')
             }
-            else {
-                const data = { mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer }
-                updateData(data)
-            }
+
         })
 
         // return () => {
@@ -374,13 +396,15 @@ export const GameOnline = ({ navigation, route }) => {
         const newArray = mockInLines
         newArray[index] = newItem
         if (current.player == 0) {
-            playerZeroMocks[current.index].show = false
-            setPlayerZeroMocks(playerZeroMocks)
+            const p0m = [...playerZeroMocks]
+            p0m[current.index].show = false
+            setPlayerZeroMocks(p0m)
 
         }
         else {
-            playerOneMocks[current.index].show = false
-            setPlayerOneMocks(playerOneMocks)
+            const p1m = [...playerOneMocks]
+            p1m[current.index].show = false
+            setPlayerOneMocks(p1m)
 
         }
 
@@ -506,6 +530,7 @@ export const GameOnline = ({ navigation, route }) => {
                                                 if (active) {
                                                     console.log(current?.id == mock.id)
                                                     setCurrent((current && current?.id == mock.id) ? null : { ...mock, index })
+                                                    updateData()
                                                 } else if (activePlayer != mock.player && mock.show != false) {
                                                     playSound('wrong')
                                                 }
@@ -552,6 +577,8 @@ export const GameOnline = ({ navigation, route }) => {
                                         onPress={() => {
                                             if (isActive) {
                                                 addMock(item, index, current?.player, current?.size)
+                                                updateData()
+
                                             }
                                             else {
                                                 playSound('wrong')
@@ -619,6 +646,8 @@ export const GameOnline = ({ navigation, route }) => {
                                             }} onPress={() => {
                                                 if (active) {
                                                     setCurrent(current ? null : { ...mock, index })
+                                                    updateData()
+
                                                 } else if (activePlayer != mock.player && mock.show != false) {
                                                     playSound('wrong')
                                                 }
