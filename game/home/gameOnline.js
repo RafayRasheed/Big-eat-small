@@ -88,18 +88,13 @@ export const GameOnline = ({ navigation, route }) => {
     const [showYesNoModal, setShowYesNoModal] = useState(false)
 
     function updateData(data) {
-        const s = new Date().toUTCString()
-        const dataUse = { mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer }
-
+        // const s = new Date().toUTCString()
+        const dataU = data ? data : { mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer }
+        dataU.updateBy = myPlayer
         database()
-            .ref(`/game/playing`).child(gameID).update({
-                game: data ? data : dataUse,
-                active: s,
-            })
+            .ref(`/game/playing`).child(gameID).child('game')
+            .update(dataU)
     }
-    // useEffect(() => {
-    //     updateData(data)
-    // }, [mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer])
 
     useFocusEffect(
         React.useCallback(() => {
@@ -136,22 +131,7 @@ export const GameOnline = ({ navigation, route }) => {
 
     }
 
-    const updateAllStates = ({ mockInLines = mockInLines, playerZeroMocks = playerZeroMocks,
-        playerOneMocks = playerOneMocks, current = current,
-        lastPlayer = lastPlayer, playerCount = playerCount, winnerModal = winnerModal,
-        activePlayer = activePlayer }) => {
 
-        setMockInLines(mockInLines)
-        setPlayerZeroMocks(playerZeroMocks)
-        setPlayerOneMocks(playerOneMocks)
-        setCurrent(current)
-        setLastPlayer(lastPlayer)
-        setPlayerCount(playerCount)
-        setIsWinner(winnerModal)
-        setShowWinnerModal(winnerModal)
-        setActivePlayer(activePlayer)
-
-    }
 
 
     useEffect(() => {
@@ -167,40 +147,51 @@ export const GameOnline = ({ navigation, route }) => {
                 const val = snapshot.val()
                 const game = val.game
                 // console.log('User data: ', game);
-
+                // return
                 if (game) {
-                    // const mockInLinesO = mockInLines
-                    // const playerZeroMocksO = playerZeroMocks
-                    // const playerOneMocksO = playerOneMocks
-                    // const currentO = current
-                    // const lastPlayerO = lastPlayer
-                    // const playerCountO = playerCount
-                    // const winnerModalO = winnerModal
-                    // const activePlayerO = activePlayer
+                    if (game.updateBy != myPlayer) {
+                        // console.log(game.updateBy != myPlayer)
+                        // const mockInLinesO = mockInLines
+                        // const playerZeroMocksO = playerZeroMocks
+                        // const playerOneMocksO = playerOneMocks
+                        // const currentO = current
+                        // const lastPlayerO = lastPlayer
+                        // const playerCountO = playerCount
+                        // const winnerModalO = winnerModal
+                        // const activePlayerO = activePlayer
 
-                    const { mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer } = game
-                    console.log('mockInLinesO', mockInLines)
+                        const { mockInLines, playerZeroMocks, playerOneMocks, current,
+                            lastPlayer, playerCount, winnerModal, isWinner,
+                            activePlayer } = game
+                        // console.log('isWinner', isWinner)
+                        // console.log('current', current)
+                        // console.log('lastPlayer', lastPlayer)
+                        // console.log('activePlayer', activePlayer)
 
-                    // console.log('game', game.mockInLines == undefined)
+                        // console.log('game', game.mockInLines == undefined)
 
-                    setMockInLines([...mockInLines])
-                    setPlayerZeroMocks([...playerZeroMocks])
-                    setPlayerOneMocks([...playerOneMocks])
-                    setCurrent(current)
-                    setLastPlayer(lastPlayer)
-                    setPlayerCount(playerCount)
-                    setIsWinner(winnerModal)
-                    setShowWinnerModal(winnerModal)
-                    setActivePlayer(activePlayer)
+                        setMockInLines([...mockInLines])
+                        setPlayerZeroMocks([...playerZeroMocks])
+                        setPlayerOneMocks([...playerOneMocks])
+                        setCurrent(current ? current : null)
+                        setLastPlayer(lastPlayer)
+                        setPlayerCount(playerCount)
+                        setIsWinner(isWinner)
+                        setActivePlayer(activePlayer)
+                    }
+
                 }
                 else {
-                    const data = { current, lastPlayer, playerCount, winnerModal, activePlayer }
+                    const data = { current, lastPlayer, playerCount, winnerModal, activePlayer, isWinner }
                     data.mockInLines = iniMock
                     data.playerZeroMocks = ini0
                     data.playerOneMocks = ini1
 
                     // console.log('mockInLines', mockInLines)
-
+                    database()
+                        .ref(`/game/playing`).child(gameID).update({
+                            game: data
+                        })
                     updateData(data)
                 }
             } else {
@@ -217,33 +208,39 @@ export const GameOnline = ({ navigation, route }) => {
 
     }, [])
 
-
     useEffect(() => {
 
         if (isWinner != false) {
-            if (isWinner == null) {
-                setTimeout(() => {
-                    playSound('game')
-
-                }, 100)
-                setLastPlayer(lastPlayer == 0 ? 1 : 0)
-
-            }
-            else {
-                playSound('win')
-                setLastPlayer(isWinner.player)
-
-            }
-            setTimeout(() => {
-                setShowWinnerModal(true)
-                // navigation.replace('Winner', { playerCount, startPlayer: 1 })
-
-                // Alert.alert('show modal')
-            }, 1000)
+            handleWinner()
+        }
+        else {
+            setShowWinnerModal(false)
         }
     }, [isWinner])
+    function handleWinner() {
+        if (isWinner == null) {
+            setTimeout(() => {
+                playSound('game')
+
+            }, 100)
+            setLastPlayer(lastPlayer == 0 ? 1 : 0)
+
+        }
+        else {
+            playSound('win')
+            setLastPlayer(isWinner.player)
+
+        }
+        setTimeout(() => {
+            setShowWinnerModal(true)
+            // navigation.replace('Winner', { playerCount, startPlayer: 1 })
+
+            // Alert.alert('show modal')
+        }, 1000)
+    }
     function refresh() {
         const { iniMock, ini0, ini1 } = generateMockInLines()
+
         setMockInLines(iniMock)
         setPlayerZeroMocks(ini0)
         setPlayerOneMocks(ini1)
@@ -252,6 +249,17 @@ export const GameOnline = ({ navigation, route }) => {
         setIsWinner(false)
         setShowWinnerModal(false)
         setChange(!change)
+
+        const up = {
+            mockInLines: iniMock,
+            playerZeroMocks: ini0,
+            playerOneMocks: ini1,
+            current: null,
+            activePlayer: lastPlayer,
+            isWinner: false,
+
+        }
+        // updateData(up)
 
 
     }
@@ -387,6 +395,7 @@ export const GameOnline = ({ navigation, route }) => {
         // let playerZero = []
         // let playerOne = []
         // const id = posX.toString() + posY.toString()
+        let newUpdateData = {}
         const newItem = {
             ...item,
             player,
@@ -399,26 +408,33 @@ export const GameOnline = ({ navigation, route }) => {
             const p0m = [...playerZeroMocks]
             p0m[current.index].show = false
             setPlayerZeroMocks(p0m)
+            newUpdateData.playerZeroMocks = p0m
 
         }
         else {
             const p1m = [...playerOneMocks]
             p1m[current.index].show = false
             setPlayerOneMocks(p1m)
+            newUpdateData.playerOneMocks = p1m
 
         }
 
 
 
         setMockInLines(newArray)
+
         setCurrent(null)
+        newUpdateData.mockInLines = newArray
+        newUpdateData.current = null
         const win = checkWinner(activePlayer, newArray)
 
         if (win && win.player != null) {
             playerCount[win.player] = playerCount[win.player] + 1
             setPlayerCount(playerCount)
             setIsWinner(win)
-
+            newUpdateData.playerCount = playerCount
+            newUpdateData.isWinner = win
+            updateData(newUpdateData)
             return
 
         }
@@ -437,9 +453,13 @@ export const GameOnline = ({ navigation, route }) => {
             }
             if (morePlay) {
                 setActivePlayer(1)
+                newUpdateData.activePlayer = 1
             }
             else {
                 setIsWinner(null)
+                newUpdateData.isWinner = null
+                updateData(newUpdateData)
+
                 return
             }
         }
@@ -458,16 +478,22 @@ export const GameOnline = ({ navigation, route }) => {
 
             if (morePlay) {
                 setActivePlayer(0)
+                newUpdateData.activePlayer = 0
+
             }
             else {
                 setIsWinner(null)
+                newUpdateData.isWinner = null
+                updateData(newUpdateData)
+
                 return
             }
 
         }
         playSound('place')
-
         setChange(!change)
+        updateData(newUpdateData)
+
 
     }
     // 00 01 02
@@ -528,9 +554,10 @@ export const GameOnline = ({ navigation, route }) => {
                                                 transform: [{ rotate: mock.id == current?.id ? '25deg' : '0deg' }]
                                             }} onPress={() => {
                                                 if (active) {
-                                                    console.log(current?.id == mock.id)
-                                                    setCurrent((current && current?.id == mock.id) ? null : { ...mock, index })
-                                                    updateData()
+                                                    // console.log(current?.id == mock.id)
+                                                    const cu = (current && current?.id == mock.id) ? null : { ...mock, index }
+                                                    setCurrent(cu)
+                                                    updateData({ current: cu })
                                                 } else if (activePlayer != mock.player && mock.show != false) {
                                                     playSound('wrong')
                                                 }
@@ -577,7 +604,6 @@ export const GameOnline = ({ navigation, route }) => {
                                         onPress={() => {
                                             if (isActive) {
                                                 addMock(item, index, current?.player, current?.size)
-                                                updateData()
 
                                             }
                                             else {
@@ -645,8 +671,12 @@ export const GameOnline = ({ navigation, route }) => {
                                                 transform: [{ rotate: mock.id == current?.id ? '25deg' : '0deg' }]
                                             }} onPress={() => {
                                                 if (active) {
-                                                    setCurrent(current ? null : { ...mock, index })
-                                                    updateData()
+                                                    // const cu = current ? null : { ...mock, index }
+                                                    const cu = (current && current?.id == mock.id) ? null : { ...mock, index }
+
+                                                    setCurrent(cu)
+                                                    // console.log('----', { current: cu })
+                                                    updateData({ current: cu })
 
                                                 } else if (activePlayer != mock.player && mock.show != false) {
                                                     playSound('wrong')
