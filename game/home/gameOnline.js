@@ -13,8 +13,11 @@ import { initialMockInLines, initialMockInLines2, player0Mocks, player0Mocks2, p
 import SoundPlayer from 'react-native-sound-player';
 import { useFocusEffect } from '@react-navigation/native';
 import database from '@react-native-firebase/database';
-
-const lineContainerSize = myWidth(75)
+import { RFValue } from 'react-native-responsive-fontsize';
+const ratio = myHeight(100) / myWidth(100)
+console.log(myHeight(100), ratio)
+// const lineContainerSize = RFValue(250)
+const lineContainerSize = myWidth(37) * ratio
 const lineWidthSize = lineContainerSize / 20
 const boxSize = (lineContainerSize - (lineWidthSize * 2)) / 3
 const mockSizes = [boxSize / 1.75, boxSize / 1.38, boxSize / 1.05]
@@ -141,61 +144,60 @@ export const GameOnline = ({ navigation, route }) => {
         setPlayerZeroMocks(ini0)
         setPlayerOneMocks(ini1)
 
-        database().ref(`/game/playing`).child(gameID).on('value', snapshot => {
-            if (snapshot) {
+        database().ref(`/game/playing`).child(gameID).child('game').on('value', snapshot => {
+            if (snapshot.val()) {
 
-                const val = snapshot.val()
-                const game = val.game
-                // console.log('User data: ', game);
+                const game = snapshot.val()
+                // const game = val.game
+                // console.log('User data: ', val);
                 // return
-                if (game) {
-                    if (game.updateBy != myPlayer) {
-                        // console.log(game.updateBy != myPlayer)
-                        // const mockInLinesO = mockInLines
-                        // const playerZeroMocksO = playerZeroMocks
-                        // const playerOneMocksO = playerOneMocks
-                        // const currentO = current
-                        // const lastPlayerO = lastPlayer
-                        // const playerCountO = playerCount
-                        // const winnerModalO = winnerModal
-                        // const activePlayerO = activePlayer
 
-                        const { mockInLines, playerZeroMocks, playerOneMocks, current,
-                            lastPlayer, playerCount, winnerModal, isWinner,
-                            activePlayer } = game
-                        // console.log('isWinner', isWinner)
-                        // console.log('current', current)
-                        // console.log('lastPlayer', lastPlayer)
-                        // console.log('activePlayer', activePlayer)
+                if (game.updateBy != myPlayer) {
+                    // console.log(game.updateBy != myPlayer)
+                    // const mockInLinesO = mockInLines
+                    // const playerZeroMocksO = playerZeroMocks
+                    // const playerOneMocksO = playerOneMocks
+                    // const currentO = current
+                    // const lastPlayerO = lastPlayer
+                    // const playerCountO = playerCount
+                    // const winnerModalO = winnerModal
+                    // const activePlayerO = activePlayer
 
-                        // console.log('game', game.mockInLines == undefined)
+                    const { mockInLines, playerZeroMocks, playerOneMocks, current,
+                        lastPlayer, playerCount, winnerModal, isWinner,
+                        activePlayer } = game
+                    // console.log('isWinner', isWinner)
+                    // console.log('current', current)
+                    // console.log('lastPlayer', lastPlayer)
+                    // console.log('activePlayer', activePlayer)
 
-                        setMockInLines([...mockInLines])
-                        setPlayerZeroMocks([...playerZeroMocks])
-                        setPlayerOneMocks([...playerOneMocks])
-                        setCurrent(current ? current : null)
-                        setLastPlayer(lastPlayer)
-                        setPlayerCount(playerCount)
-                        setIsWinner(isWinner)
-                        setActivePlayer(activePlayer)
-                    }
+                    // console.log('game', game.mockInLines == undefined)
 
+                    setMockInLines([...mockInLines])
+                    setPlayerZeroMocks([...playerZeroMocks])
+                    setPlayerOneMocks([...playerOneMocks])
+                    setCurrent(current ? current : null)
+                    setLastPlayer(lastPlayer)
+                    setPlayerCount(playerCount)
+                    setIsWinner(isWinner)
+                    setActivePlayer(activePlayer)
                 }
-                else {
-                    const data = { current, lastPlayer, playerCount, winnerModal, activePlayer, isWinner }
-                    data.mockInLines = iniMock
-                    data.playerZeroMocks = ini0
-                    data.playerOneMocks = ini1
 
-                    // console.log('mockInLines', mockInLines)
-                    database()
-                        .ref(`/game/playing`).child(gameID).update({
-                            game: data
-                        })
-                    updateData(data)
-                }
-            } else {
-                console.log('No Snapshot')
+            }
+
+
+            else {
+                const data = { current, lastPlayer, playerCount, winnerModal, activePlayer, isWinner }
+                data.mockInLines = iniMock
+                data.playerZeroMocks = ini0
+                data.playerOneMocks = ini1
+
+                console.log('new')
+                database()
+                    .ref(`/game/playing`).child(gameID).update({
+                        game: data
+                    })
+                updateData(data)
             }
 
         })
@@ -251,15 +253,15 @@ export const GameOnline = ({ navigation, route }) => {
         setChange(!change)
 
         const up = {
-            mockInLines: iniMock,
-            playerZeroMocks: ini0,
-            playerOneMocks: ini1,
+            mockInLines: [...iniMock],
+            playerZeroMocks: [...ini0],
+            playerOneMocks: [...ini1],
             current: null,
             activePlayer: lastPlayer,
             isWinner: false,
 
         }
-        // updateData(up)
+        updateData(up)
 
 
     }
@@ -402,20 +404,36 @@ export const GameOnline = ({ navigation, route }) => {
             size,
         }
 
-        const newArray = mockInLines
+        const newArray = [...mockInLines]
         newArray[index] = newItem
-        if (current.player == 0) {
-            const p0m = [...playerZeroMocks]
-            p0m[current.index].show = false
-            setPlayerZeroMocks(p0m)
-            newUpdateData.playerZeroMocks = p0m
+        if (myPlayer == 0) {
+            const a = [...playerZeroMocks]
+            const b = a[current.index]
+
+            const c = {
+                ...b,
+                show: false
+            }
+            a[current.index] = c
+
+            setPlayerZeroMocks(a)
+            newUpdateData.playerZeroMocks = a
 
         }
         else {
-            const p1m = [...playerOneMocks]
-            p1m[current.index].show = false
-            setPlayerOneMocks(p1m)
-            newUpdateData.playerOneMocks = p1m
+            // const p1m = [...playerOneMocks]
+            // p1m[current.index].show = false
+
+            const a = [...playerOneMocks]
+            const b = a[current.index]
+
+            const c = {
+                ...b,
+                show: false
+            }
+            a[current.index] = c
+            setPlayerOneMocks(a)
+            newUpdateData.playerOneMocks = a
 
         }
 
@@ -534,8 +552,8 @@ export const GameOnline = ({ navigation, route }) => {
                     <View style={{
                         borderBottomWidth: 5, paddingBottom: myHeight(1),
 
-                        borderColor: activePlayer == 0 ? myColors.player1 : '#00000030',
-                        backgroundColor: activePlayer == 0 ? myColors.player1 + '25' : '#00000005',
+                        borderColor: activePlayer != myPlayer ? myColors.player1 : '#00000030',
+                        backgroundColor: activePlayer != myPlayer ? myColors.player1 + '25' : '#00000005',
                     }}>
                         <View style={{
                             flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'flex-end',
@@ -545,7 +563,10 @@ export const GameOnline = ({ navigation, route }) => {
 
                             {
                                 playerZeroMocks.map((mock, index) => {
-                                    const active = (0 == myPlayer) && (activePlayer == mock.player) && mock.show != false
+                                    {/* const active = (0 == myPlayer) && (activePlayer == mock.player) && mock.show != false */ }
+                                    const active = false
+                                    const show = myPlayer == 0 ? playerOneMocks[index].show : mock.show
+
                                     return (
                                         <TouchableOpacity
                                             key={index} activeOpacity={active ? 0.7 : 1}
@@ -564,10 +585,9 @@ export const GameOnline = ({ navigation, route }) => {
                                             }}>
                                             <View style={{ width: mockSizes[mock.size] / 1.2, height: mockSizes[mock.size] / 1.2 }}>
 
-                                                {mock.show != false &&
+                                                {show != false &&
                                                     <Image style={{ width: '100%', height: '100%' }}
-                                                        source={mock.player == 0 ? require('../assets/redd.png') :
-                                                            require('../assets/bluee.png')} />
+                                                        source={require('../assets/redd.png')} />
                                                 }
                                             </View>
 
@@ -591,6 +611,10 @@ export const GameOnline = ({ navigation, route }) => {
                             mockInLines.map((item, index) => {
                                 const isActive = current != null && (item.size == null || item.size < current?.size)
 
+                                if (item.size != null) {
+
+                                    console.log(ratio.toFixed(2), 'player', item.player, myPlayer)
+                                }
                                 return (
                                     <TouchableOpacity activeOpacity={isActive ? 0.7 : 1}
 
@@ -620,7 +644,7 @@ export const GameOnline = ({ navigation, route }) => {
                                                     width: mockSizes[item.size], height: mockSizes[item.size],
 
 
-                                                }} source={item.player == 0 ? require('../assets/redd.png') : require('../assets/bluee.png')} />
+                                                }} source={item.player != myPlayer ? require('../assets/redd.png') : require('../assets/bluee.png')} />
                                                 : <TouchableOpacity style={{
                                                     height: '0%', width: '0%',
                                                     backgroundColor: '#00000010'
@@ -650,8 +674,8 @@ export const GameOnline = ({ navigation, route }) => {
                     <View style={{
                         borderTopWidth: 5, paddingTop: myHeight(1),
 
-                        borderColor: activePlayer == 1 ? myColors.player2 : '#00000020',
-                        backgroundColor: activePlayer == 1 ? myColors.player2 + '35' : '#00000010',
+                        borderColor: activePlayer == myPlayer ? myColors.player2 : '#00000020',
+                        backgroundColor: activePlayer == myPlayer ? myColors.player2 + '35' : '#00000010',
 
                     }}>
                         <View style={{
@@ -662,7 +686,9 @@ export const GameOnline = ({ navigation, route }) => {
 
                             {
                                 playerOneMocks.map((mock, index) => {
-                                    const active = (1 == myPlayer) && (activePlayer == mock.player) && mock.show != false
+                                    {/* const active = (activePlayer == myPlayer) && (activePlayer == mock.player) && mock.show != false */ }
+                                    const show = myPlayer == 0 ? playerZeroMocks[index].show : mock.show
+                                    const active = (activePlayer == myPlayer) && show != false
 
                                     return (
                                         <TouchableOpacity key={index} activeOpacity={active ? 0.7 : 1}
@@ -672,11 +698,16 @@ export const GameOnline = ({ navigation, route }) => {
                                             }} onPress={() => {
                                                 if (active) {
                                                     // const cu = current ? null : { ...mock, index }
-                                                    const cu = (current && current?.id == mock.id) ? null : { ...mock, index }
-
+                                                    const s = {
+                                                        ...mock,
+                                                        player: myPlayer,
+                                                        index,
+                                                    }
+                                                    const cu = (current && current?.id == mock.id) ? null : { ...s }
+                                                    // console.log(cu)
                                                     setCurrent(cu)
-                                                    // console.log('----', { current: cu })
-                                                    updateData({ current: cu })
+                                                    // // console.log('----', { current: cu })
+                                                    // updateData({ current: cu })
 
                                                 } else if (activePlayer != mock.player && mock.show != false) {
                                                     playSound('wrong')
@@ -685,10 +716,9 @@ export const GameOnline = ({ navigation, route }) => {
                                             }}>
                                             <View style={{ width: mockSizes[mock.size] / 1.2, height: mockSizes[mock.size] / 1.2 }}>
 
-                                                {mock.show != false &&
+                                                {show != false &&
                                                     <Image style={{ width: '100%', height: '100%' }}
-                                                        source={mock.player == 0 ? require('../assets/redd.png') :
-                                                            require('../assets/bluee.png')} />
+                                                        source={require('../assets/bluee.png')} />
                                                 }
                                             </View>
 
