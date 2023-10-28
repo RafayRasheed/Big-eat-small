@@ -7,7 +7,7 @@ import { AppNavigator } from './game/app_navigator';
 import { Provider, useDispatch } from 'react-redux';
 
 import SplashScreen from 'react-native-splash-screen'
-import storeRedux from './redux/store_redux';
+import storeRedux from './store_redux';
 import { setMute } from './redux/states_reducer';
 import { getMuteStorage } from './game/storageFun';
 import KeepAwake from 'react-native-keep-awake';

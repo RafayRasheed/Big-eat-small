@@ -544,7 +544,7 @@ export const GameOnline = ({ navigation, route }) => {
                     //  backgroundColor: 'yellow',
                     alignItems: 'center'
                 }}
-                source={require('../assets/background.png')} resizeMode='cover'
+                source={require('../assets/background.jpg')} resizeMode='cover'
             >
                 <StatusbarH />
                 <View style={{ flex: 1, justifyContent: 'space-between', }}>

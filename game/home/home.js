@@ -318,6 +318,86 @@ export const Home = ({ navigation, route }) => {
                 <YesNoModal yesFun={onOK} noFun={onCancel} text='Are You Sure You Want To Exit' />
             }
 
+            {
+                <View style={{
+                    position: 'absolute',
+                    zIndex: 100, backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    height: '100%', width: '100%', justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <ImageBackground
+                        style={{ height: myWidth(95) / 1.3, width: myWidth(95), justifyContent: 'center', alignSelf: 'center' }}
+                        source={require('../assets/board3.png')} resizeMode='contain'
+                    >
+                        <View style={{
+                            height: '100%',
+                            width: '100%',
+                            flexDirection: 'row', paddingHorizontal: myWidth(2.5),
+                            justifyContent: 'space-between',
+                        }}>
+                            <View style={{
+                                width: myWidth(35), alignItems: 'center',
+                                transform: [{ translateX: 50 }]
+                                // marginStart: myWidth(2.5),
+                                // backgroundColor: 'red'
+                            }}>
+                                <Spacer paddingT={myWidth(12)} />
+                                <Image style={{ width: myWidth(28), height: myWidth(28) }}
+                                    source={require('../assets/bluee.png')} />
+                                <Spacer paddingT={myWidth(2)} />
+
+                                <Text numberOfLines={2} style={[styles.textCommon, {
+                                    fontFamily: myFonts.headingBold,
+                                    fontSize: myFontSize.xMedium,
+                                    color: myColors.woodD,
+                                    textAlign: 'center',
+                                    width: '100%',
+                                    // backgroundColor: 'red'
+
+
+                                }]}>Rafay1</Text>
+                            </View>
+                            <View style={{
+                                width: myWidth(20),
+                                alignItems: 'center',
+                                marginTop: myWidth(25)
+                                // justifyContent: 'center'
+                                // backgroundColor: 'black'
+                            }}>
+
+                                <MyDoubleText fontSize={myFontSize.large} text='VS' frontColor={myColors.wood} />
+                            </View>
+
+                            <View style={{
+                                width: myWidth(35), alignItems: 'center',
+                                // marginStart: myWidth(2.5),
+                                // backgroundColor: 'red'
+                            }}>
+                                <Spacer paddingT={myWidth(12)} />
+                                <Image style={{ width: myWidth(28), height: myWidth(28) }}
+                                    source={require('../assets/redd.png')} />
+                                <Spacer paddingT={myWidth(2)} />
+
+                                <Text numberOfLines={2} style={[styles.textCommon, {
+                                    fontFamily: myFonts.headingBold,
+                                    fontSize: myFontSize.xMedium,
+                                    color: myColors.woodD,
+                                    textAlign: 'center',
+                                    width: '100%',
+                                    // backgroundColor: 'red'
+
+
+                                }]}>Rafay2</Text>
+                            </View>
+
+
+                        </View>
+
+
+                    </ImageBackground>
+                </View>
+            }
+
         </>
     )
 }
