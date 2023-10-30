@@ -12,19 +12,74 @@ import {
     YesNoModal, playBackground, playSound, stopMusic
 } from '../component/components';
 import { useFocusEffect } from '@react-navigation/native';
-import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import Animated, { BounceIn, BounceOut, FadeIn, FadeInDown, FadeOut, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSelector, useDispatch } from 'react-redux'
 import { setMute } from '../../redux/states_reducer';
 import { getMuteStorage } from '../storageFun';
 import database from '@react-native-firebase/database';
 
 export const Home = ({ navigation, route }) => {
+    let inter = null
     const [showYesNoModal, setShowYesNoModal] = useState(false)
+    const [findPlayerModal, setFindPlayerModal] = useState(false)
+    // const [find, setFind] = useState(false)
     const [ID, SetID] = useState(null)
     const { mute } = useSelector(state => state.GameStates)
     const dispatch = useDispatch()
     const appState = useRef(AppState.currentState);
+    const val = myWidth(90)
+    const TranY = useSharedValue(-val);
 
+    const TranYStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ translateY: TranY.value }],
+        };
+    });
+
+    useEffect(() => {
+
+        if (findPlayerModal) {
+            // clearInterval(inter)
+
+               const inter2 = setInterval(() => {
+                    // console.log(find)
+                    // if(v>-600){
+                    TranY.value = withTiming(-val, { duration: 0 })
+
+
+                    TranY.value = withTiming(val, { duration: 600 })
+
+                }, 600)
+                inter = inter2
+           
+        }
+
+
+
+        return () => clearInterval(inter);
+
+    }, [findPlayerModal])
+
+    function findOpenant() {
+        console.log(inter)
+        clearInterval(inter)
+        const cc = TranY.value
+        const com = myWidth(80)
+        const t = (cc < -com || cc > com) ? 0 : 500
+
+        // TranY.value = withTiming(val, { duration: 600 })
+        setTimeout(() => {
+
+            TranY.value = withTiming(-val, { duration: 0 })
+            TranY.value = withTiming(0, { duration: 600 })
+            // setTimeout(()=>{
+
+            //     // setFindPlayerModal(false)
+            // },1000)
+
+        }, t)
+
+    }
     function Yes() {
 
         database()
@@ -221,11 +276,13 @@ export const Home = ({ navigation, route }) => {
     function OnStart() {
         // navigation.navigate('Game')
         playSound('click')
-        Yes()
-        // setTimeout(() => {
-        //     navigation.navigate('Game', { playerCount: [0, 0], startPlayer: 0 })
+        setFindPlayerModal(true)
+        setTimeout(() => {
+            findOpenant()
 
-        // }, 40)
+        }, 5000)
+        // Yes()
+
 
 
     }
@@ -319,82 +376,102 @@ export const Home = ({ navigation, route }) => {
             }
 
             {
+                findPlayerModal &&
                 <View style={{
                     position: 'absolute',
                     zIndex: 100, backgroundColor: 'rgba(0, 0, 0, 0.7)',
                     height: '100%', width: '100%', justifyContent: 'center',
                     alignItems: 'center'
                 }}>
-                    <ImageBackground
-                        style={{ height: myWidth(95) / 1.3, width: myWidth(95), justifyContent: 'center', alignSelf: 'center' }}
-                        source={require('../assets/board3.png')} resizeMode='contain'
-                    >
-                        <View style={{
-                            height: '100%',
-                            width: '100%',
-                            flexDirection: 'row', paddingHorizontal: myWidth(2.5),
-                            justifyContent: 'space-between',
-                        }}>
+                    <Animated.View entering={BounceIn.duration(400)} exiting={BounceOut.duration(100)}>
+
+                        <ImageBackground
+                            style={{ height: myWidth(95) / 1.3, width: myWidth(95), justifyContent: 'center', alignSelf: 'center' }}
+                            source={require('../assets/board3.png')} resizeMode='contain'
+                        >
                             <View style={{
-                                width: myWidth(35), alignItems: 'center',
-                                transform: [{ translateX: 50 }]
-                                // marginStart: myWidth(2.5),
-                                // backgroundColor: 'red'
+                                height: '100%',
+                                width: '100%',
+                                flexDirection: 'row', paddingHorizontal: myWidth(2.5),
+                                justifyContent: 'space-between',
+                                overflow: 'hidden'
+                                // backgroundColor:'yellow'
                             }}>
-                                <Spacer paddingT={myWidth(12)} />
-                                <Image style={{ width: myWidth(28), height: myWidth(28) }}
-                                    source={require('../assets/bluee.png')} />
-                                <Spacer paddingT={myWidth(2)} />
+                                <Animated.View style={[{
+                                    overflow: 'hidden',
+                                    marginVertical: myWidth(5),
+                                },]}>
 
-                                <Text numberOfLines={2} style={[styles.textCommon, {
-                                    fontFamily: myFonts.headingBold,
-                                    fontSize: myFontSize.xMedium,
-                                    color: myColors.woodD,
-                                    textAlign: 'center',
-                                    width: '100%',
-                                    // backgroundColor: 'red'
+                                    <Animated.View style={[{
+                                        width: myWidth(35), alignItems: 'center',
+                                        // backgroundColor: 'red',
+
+                                    },]}>
+                                        <Spacer paddingT={myWidth(10)} />
+                                        <Image style={{ width: myWidth(28), height: myWidth(28) }}
+                                            source={require('../assets/bluee.png')} />
+                                        <Spacer paddingT={myWidth(2)} />
+
+                                        <Text numberOfLines={2} style={[styles.textCommon, {
+                                            fontFamily: myFonts.headingBold,
+                                            fontSize: myFontSize.xMedium,
+                                            color: myColors.woodD,
+                                            textAlign: 'center',
+                                            width: '100%',
+                                            // backgroundColor: 'red'
 
 
-                                }]}>Rafay1</Text>
+                                        }]}>Rafay1</Text>
+                                    </Animated.View>
+                                </Animated.View>
+                                <View style={{
+                                    width: myWidth(20),
+                                    alignItems: 'center',
+                                    marginTop: myWidth(25)
+                                    // justifyContent: 'center'
+                                    // backgroundColor: 'black'
+                                }}>
+
+                                    <MyDoubleText fontSize={myFontSize.large} text='VS' frontColor={myColors.wood} />
+                                </View>
+
+                                <Animated.View style={[{
+                                    overflow: 'hidden',
+                                    marginVertical: myWidth(5),
+                                },]}>
+
+                                    <Animated.View style={[{
+                                        width: myWidth(35), alignItems: 'center',
+                                        // backgroundColor: 'red',
+
+                                    }, TranYStyle]}>
+                                        <View>
+
+                                            <Spacer paddingT={myWidth(10)} />
+                                            <Image style={{ width: myWidth(28), height: myWidth(28) }}
+                                                source={require('../assets/redd.png')} />
+                                            <Spacer paddingT={myWidth(2)} />
+                                            {/* 
+                                        <Text numberOfLines={2} style={[styles.textCommon, {
+                                            fontFamily: myFonts.headingBold,
+                                            fontSize: myFontSize.xMedium,
+                                            color: myColors.woodD,
+                                            textAlign: 'center',
+                                            width: '100%',
+                                            // backgroundColor: 'red'
+
+
+                                        }]}>Player</Text> */}
+                                        </View>
+                                    </Animated.View>
+                                </Animated.View>
+
+
                             </View>
-                            <View style={{
-                                width: myWidth(20),
-                                alignItems: 'center',
-                                marginTop: myWidth(25)
-                                // justifyContent: 'center'
-                                // backgroundColor: 'black'
-                            }}>
-
-                                <MyDoubleText fontSize={myFontSize.large} text='VS' frontColor={myColors.wood} />
-                            </View>
-
-                            <View style={{
-                                width: myWidth(35), alignItems: 'center',
-                                // marginStart: myWidth(2.5),
-                                // backgroundColor: 'red'
-                            }}>
-                                <Spacer paddingT={myWidth(12)} />
-                                <Image style={{ width: myWidth(28), height: myWidth(28) }}
-                                    source={require('../assets/redd.png')} />
-                                <Spacer paddingT={myWidth(2)} />
-
-                                <Text numberOfLines={2} style={[styles.textCommon, {
-                                    fontFamily: myFonts.headingBold,
-                                    fontSize: myFontSize.xMedium,
-                                    color: myColors.woodD,
-                                    textAlign: 'center',
-                                    width: '100%',
-                                    // backgroundColor: 'red'
 
 
-                                }]}>Rafay2</Text>
-                            </View>
-
-
-                        </View>
-
-
-                    </ImageBackground>
+                        </ImageBackground>
+                    </Animated.View>
                 </View>
             }
 
