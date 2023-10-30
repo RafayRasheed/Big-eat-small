@@ -280,7 +280,7 @@ export const Home = ({ navigation, route }) => {
         setTimeout(() => {
             findOpenant()
 
-        }, 5000)
+        }, 4000)
         // Yes()
 
 
