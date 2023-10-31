@@ -22,6 +22,7 @@ export const Home = ({ navigation, route }) => {
     let inter = null
     const [showYesNoModal, setShowYesNoModal] = useState(false)
     const [findPlayerModal, setFindPlayerModal] = useState(false)
+    const [foundOpenant, setFoundOpenant] = useState(false)
     // const [find, setFind] = useState(false)
     const [ID, SetID] = useState(null)
     const { mute } = useSelector(state => state.GameStates)
@@ -36,22 +37,24 @@ export const Home = ({ navigation, route }) => {
         };
     });
 
+
+
     useEffect(() => {
 
         if (findPlayerModal) {
             // clearInterval(inter)
 
-               const inter2 = setInterval(() => {
-                    // console.log(find)
-                    // if(v>-600){
-                    TranY.value = withTiming(-val, { duration: 0 })
+            //    const inter2 = setInterval(() => {
+            //         // console.log(find)
+            //         // if(v>-600){
+            //         TranY.value = withTiming(-val, { duration: 0 })
 
 
-                    TranY.value = withTiming(val, { duration: 600 })
+            //         TranY.value = withTiming(val, { duration: 600 })
 
-                }, 600)
-                inter = inter2
-           
+            //     }, 600)
+            //     inter = inter2
+
         }
 
 
@@ -60,27 +63,30 @@ export const Home = ({ navigation, route }) => {
 
     }, [findPlayerModal])
 
-    function findOpenant() {
-        console.log(inter)
-        clearInterval(inter)
-        const cc = TranY.value
-        const com = myWidth(80)
-        const t = (cc < -com || cc > com) ? 0 : 500
+    function findOpenant(data) {
+        // console.log(inter)
+        // clearInterval(inter)
+        // const cc = TranY.value
+        // const com = myWidth(80)
+        // const t = (cc < -com || cc > com) ? 0 : 500
+
+        TranY.value = withTiming(0, { duration: 600 })
 
         // TranY.value = withTiming(val, { duration: 600 })
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            TranY.value = withTiming(-val, { duration: 0 })
-            TranY.value = withTiming(0, { duration: 600 })
-            // setTimeout(()=>{
+        // TranY.value = withTiming(-val, { duration: 0 })
+        // TranY.value = withTiming(0, { duration: 600 })
+        // setTimeout(()=>{
 
-            //     // setFindPlayerModal(false)
-            // },1000)
+        //     // setFindPlayerModal(false)
+        // },1000)
 
-        }, t)
+        // }, t)
 
     }
     function Yes() {
+        playSound('find')
 
         database()
             .ref(`/game/playing`)
@@ -119,7 +125,7 @@ export const Home = ({ navigation, route }) => {
                     }
 
                     if (!order.player2 && time < 0.5 && !found) {
-                        found = documentSnapshot1.key
+                        found = { ...order, key: documentSnapshot1.key }
                         return
 
                     }
@@ -133,11 +139,18 @@ export const Home = ({ navigation, route }) => {
                     const s = new Date().toUTCString()
 
                     database()
-                        .ref(`/game/playing`).child(found).update({
+                        .ref('/game/playing').child(found.key).update({
                             player2: 'Rafay2',
                             active: s,
                         }).then(() => {
-                            navigation.navigate('Game', { gameID: found, myPlayer: 1 })
+
+                            setFoundOpenant({ name: found.player1 })
+                            findOpenant()
+                            playSound('place')
+                            setTimeout(() => {
+                                navigation.navigate('Game', { gameID: found.key, myPlayer: 1 })
+                                resetFindModal()
+                            }, 2500)
 
                         })
                 }
@@ -201,17 +214,20 @@ export const Home = ({ navigation, route }) => {
     }
 
     useEffect(() => {
+        if (!ID) {
 
-        if (ID) {
-            database()
-                .ref(`/game/playing`).child(ID).on('value', snapshot => {
-                    const s = snapshot.val()
-                    // console.log('User data: ', );
-                    if (s.player2) {
-                        navigation.navigate('Game', { gameID: ID, myPlayer: 0 })
-                    }
-                });
+            return
         }
+
+        //     database()
+        //         .ref(`/game/playing`).child(ID).on('value', snapshot => {
+        //             const s = snapshot.val()
+        //             // console.log('User data: ', );
+        //             if (s.player2) {
+        //                 navigation.navigate('Game', { gameID: ID, myPlayer: 0 })
+        //             }
+        //         });
+    
     }, [ID])
 
     useEffect(() => {
@@ -251,6 +267,15 @@ export const Home = ({ navigation, route }) => {
         }
     }
     const onBackPress = () => {
+        if (findPlayerModal) {
+            if (foundOpenant) {
+                return true
+
+            }
+            onLeave()
+            return true
+
+        }
         if (showYesNoModal) {
             setShowYesNoModal(false)
 
@@ -277,14 +302,21 @@ export const Home = ({ navigation, route }) => {
         // navigation.navigate('Game')
         playSound('click')
         setFindPlayerModal(true)
-        setTimeout(() => {
-            findOpenant()
 
-        }, 4000)
-        // Yes()
+
+        Yes()
 
 
 
+    }
+    function resetFindModal() {
+        TranY.value = -val
+        setFindPlayerModal(false)
+
+    }
+    function onLeave() {
+        resetFindModal()
+        setFoundOpenant(false)
     }
     function onSound() {
         // navigation.navigate('Game')
@@ -379,27 +411,36 @@ export const Home = ({ navigation, route }) => {
                 findPlayerModal &&
                 <View style={{
                     position: 'absolute',
-                    zIndex: 100, backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                    height: '100%', width: '100%', justifyContent: 'center',
+                    zIndex: 100, backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    height: '100%', width: '100%',
+                    justifyContent: 'center',
                     alignItems: 'center'
                 }}>
                     <Animated.View entering={BounceIn.duration(400)} exiting={BounceOut.duration(100)}>
 
                         <ImageBackground
-                            style={{ height: myWidth(95) / 1.3, width: myWidth(95), justifyContent: 'center', alignSelf: 'center' }}
+                            style={{ height: myWidth(95) / 1.3, overflow: 'hidden', width: myWidth(95), justifyContent: 'center', alignSelf: 'center' }}
                             source={require('../assets/board3.png')} resizeMode='contain'
                         >
+                            <View style={{
+                                width: '100%', height: myWidth(26),
+                                alignItems: 'center', justifyContent: 'flex-end',
+                                // backgroundColor:'red'
+                            }}>
+
+                                <MyDoubleText fontSize={myFontSize.medium3} text={foundOpenant ? '' : 'Finding...'} frontColor={myColors.wood} />
+                            </View>
                             <View style={{
                                 height: '100%',
                                 width: '100%',
                                 flexDirection: 'row', paddingHorizontal: myWidth(2.5),
                                 justifyContent: 'space-between',
-                                overflow: 'hidden'
+                                // overflow: 'hidden'
                                 // backgroundColor:'yellow'
                             }}>
                                 <Animated.View style={[{
-                                    overflow: 'hidden',
-                                    marginVertical: myWidth(5),
+                                    // overflow: 'hidden',
+                                    marginVertical: myWidth(3),
                                 },]}>
 
                                     <Animated.View style={[{
@@ -407,27 +448,29 @@ export const Home = ({ navigation, route }) => {
                                         // backgroundColor: 'red',
 
                                     },]}>
-                                        <Spacer paddingT={myWidth(10)} />
+                                        {/* <Spacer paddingT={myWidth(10)} /> */}
                                         <Image style={{ width: myWidth(28), height: myWidth(28) }}
                                             source={require('../assets/bluee.png')} />
                                         <Spacer paddingT={myWidth(2)} />
 
-                                        <Text numberOfLines={2} style={[styles.textCommon, {
+                                        <Text numberOfLines={1} style={[styles.textCommon, {
                                             fontFamily: myFonts.headingBold,
-                                            fontSize: myFontSize.xMedium,
+                                            fontSize: myFontSize.medium3,
                                             color: myColors.woodD,
                                             textAlign: 'center',
                                             width: '100%',
+                                            height: '100%',
+
                                             // backgroundColor: 'red'
 
 
-                                        }]}>Rafay1</Text>
+                                        }]}>Rafay</Text>
                                     </Animated.View>
                                 </Animated.View>
                                 <View style={{
                                     width: myWidth(20),
                                     alignItems: 'center',
-                                    marginTop: myWidth(25)
+                                    marginTop: myWidth(15)
                                     // justifyContent: 'center'
                                     // backgroundColor: 'black'
                                 }}>
@@ -436,34 +479,39 @@ export const Home = ({ navigation, route }) => {
                                 </View>
 
                                 <Animated.View style={[{
-                                    overflow: 'hidden',
-                                    marginVertical: myWidth(5),
+                                    // overflow: 'hidden',
+                                    marginVertical: myWidth(3),
                                 },]}>
 
                                     <Animated.View style={[{
-                                        width: myWidth(35), alignItems: 'center',
-                                        // backgroundColor: 'red',
+                                        width: myWidth(35),
+                                        alignItems: 'center',
+                                        // backgroundColor: 'blue',
 
                                     }, TranYStyle]}>
-                                        <View>
 
-                                            <Spacer paddingT={myWidth(10)} />
-                                            <Image style={{ width: myWidth(28), height: myWidth(28) }}
-                                                source={require('../assets/redd.png')} />
-                                            <Spacer paddingT={myWidth(2)} />
-                                            {/* 
-                                        <Text numberOfLines={2} style={[styles.textCommon, {
+
+                                        {/* <Spacer paddingT={myWidth(10)} /> */}
+                                        <Image style={{ width: myWidth(28), height: myWidth(28) }}
+                                            source={require('../assets/redd.png')} />
+                                        <Spacer paddingT={myWidth(2)} />
+
+                                        <Text numberOfLines={1} style={[styles.textCommon, {
                                             fontFamily: myFonts.headingBold,
-                                            fontSize: myFontSize.xMedium,
+                                            fontSize: myFontSize.medium3,
                                             color: myColors.woodD,
                                             textAlign: 'center',
                                             width: '100%',
+                                            height: '100%',
+
+                                            // flex:1,
                                             // backgroundColor: 'red'
 
 
-                                        }]}>Player</Text> */}
-                                        </View>
+                                        }]}>{foundOpenant ? foundOpenant.name : '......'}</Text>
+
                                     </Animated.View>
+
                                 </Animated.View>
 
 
@@ -471,6 +519,15 @@ export const Home = ({ navigation, route }) => {
 
 
                         </ImageBackground>
+                        <View style={{ alignItems: 'center', height: myWidth(15), marginTop: -myWidth(12) }}>
+                            {
+                                !foundOpenant &&
+
+                                <MyButton text={'Leave'} size={myWidth(43)} fun={onLeave} />
+                            }
+                        </View>
+
+                        {/* <Spacer paddingT={myHeight(2.5)} /> */}
                     </Animated.View>
                 </View>
             }
