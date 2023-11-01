@@ -41,6 +41,7 @@ export const Home = ({ navigation, route }) => {
 
     useEffect(() => {
 
+
         if (findPlayerModal) {
             // clearInterval(inter)
 
@@ -63,6 +64,16 @@ export const Home = ({ navigation, route }) => {
 
     }, [findPlayerModal])
 
+    function goToGame(data, player) {
+        SetID(null)
+        setFoundOpenant({ name: data.player1 })
+        findOpenant()
+        playSound('place')
+        setTimeout(() => {
+            navigation.navigate('Game', { gameID: data.key, myPlayer: player })
+            resetFindModal()
+        }, 2500)
+    }
     function findOpenant(data) {
         // console.log(inter)
         // clearInterval(inter)
@@ -143,14 +154,9 @@ export const Home = ({ navigation, route }) => {
                             player2: 'Rafay2',
                             active: s,
                         }).then(() => {
+                            goToGame(found, 1)
 
-                            setFoundOpenant({ name: found.player1 })
-                            findOpenant()
-                            playSound('place')
-                            setTimeout(() => {
-                                navigation.navigate('Game', { gameID: found.key, myPlayer: 1 })
-                                resetFindModal()
-                            }, 2500)
+
 
                         })
                 }
@@ -164,7 +170,6 @@ export const Home = ({ navigation, route }) => {
                             active: s,
                         }).then(() => {
                             SetID(i)
-                            // navigation.navigate('Game', { gameID: i, myPlayer: 0 })
 
                             console.log('Han Naya Game')
 
@@ -219,15 +224,23 @@ export const Home = ({ navigation, route }) => {
             return
         }
 
-        //     database()
-        //         .ref(`/game/playing`).child(ID).on('value', snapshot => {
-        //             const s = snapshot.val()
-        //             // console.log('User data: ', );
-        //             if (s.player2) {
-        //                 navigation.navigate('Game', { gameID: ID, myPlayer: 0 })
-        //             }
-        //         });
-    
+        const onValueChange = database()
+            .ref(`/game/playing`).child(ID).on('value', snapshot => {
+                const s = snapshot.val()
+                // console.log('User data: ', );
+                if (s.player2) {
+                    const found = {
+                        ...s,
+                        key: ID
+                    }
+
+                    goToGame(found, 0)
+                    // navigation.navigate('Game', { gameID: ID, myPlayer: 0 })
+                }
+            });
+        return () => database().ref(`/game/playing`).child(ID).off('value', onValueChange);
+
+
     }, [ID])
 
     useEffect(() => {
@@ -299,7 +312,6 @@ export const Home = ({ navigation, route }) => {
     }
 
     function OnStart() {
-        // navigation.navigate('Game')
         playSound('click')
         setFindPlayerModal(true)
 
@@ -312,6 +324,8 @@ export const Home = ({ navigation, route }) => {
     function resetFindModal() {
         TranY.value = -val
         setFindPlayerModal(false)
+        setFoundOpenant(false)
+        stopMusic()
 
     }
     function onLeave() {
@@ -319,7 +333,6 @@ export const Home = ({ navigation, route }) => {
         setFoundOpenant(false)
     }
     function onSound() {
-        // navigation.navigate('Game')
         if (mute) {
             dispatch(setMute(false))
             playBackground()

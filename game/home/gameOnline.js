@@ -138,6 +138,7 @@ export const GameOnline = ({ navigation, route }) => {
 
 
     useEffect(() => {
+        playSound('click')
 
         const { iniMock, ini0, ini1 } = generateMockInLines()
         setMockInLines(iniMock)
@@ -229,7 +230,17 @@ export const GameOnline = ({ navigation, route }) => {
 
         }
         else {
-            playSound('win')
+            setTimeout(() => {
+
+                if(isWinner.player==myPlayer){
+    
+                    playSound('win')
+                }
+                else{
+                    playSound('game')
+    
+                }
+            }, 100)
             setLastPlayer(isWinner.player)
 
         }
@@ -531,11 +542,7 @@ export const GameOnline = ({ navigation, route }) => {
         }, 0)
     }
 
-    const Goots = ({ }) => {
-        return (
-            null
-        )
-    }
+
     return (
         <>
             <ImageBackground
@@ -661,7 +668,7 @@ export const GameOnline = ({ navigation, route }) => {
                         {
                             isWinner &&
                             <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-                                colors={isWinner.player == 0 ? [myColors.player1, '#de645d', '#e88c87'] : [myColors.player2, '#5198d3', '#81c1f7']}
+                                colors={isWinner.player != myPlayer ? [myColors.player1, '#de645d', '#e88c87'] : [myColors.player2, '#5198d3', '#81c1f7']}
                                 style={[isWinner.style, {
                                     borderRadius: 1000, position: 'absolute',
                                     borderWidth: 0, elevation: 6, zIndex: 100,
@@ -767,39 +774,32 @@ export const GameOnline = ({ navigation, route }) => {
                                         height: myWidth(38), width: myWidth(38),
                                         resizeMode: 'cover', transform: [{ rotate: '0deg' }],
 
-                                    }} source={require('../assets/redd.png')} />
-
-                                <Spacer paddingT={myHeight(4)} />
-                                <Text style={[styles.textCommon, {
-                                    fontFamily: myFonts.heading,
-                                    fontSize: myFontSize.large * 2.5,
-                                    color: myColors.text
-                                }]}>{playerCount[0]}</Text>
-                            </View>
-
-                            <Spacer paddingEnd={myWidth(8)} />
-                            <View style={{ width: myWidth(38), alignItems: 'center' }}>
-                                {/* <Text numberOfLines={1} style={[styles.textCommon, {
-                                fontFamily: myFonts.headingBold,
-                                fontSize: myFontSize.large * 1.2,
-                                color: 'black',
-                                width: '100%',
-                                textAlign: 'center'
-                            }]}>Player 1</Text>
-                            <Spacer paddingT={myHeight(3)} /> */}
-                                <Image
-                                    style={{
-                                        height: myWidth(38), width: myWidth(38),
-                                        resizeMode: 'cover', transform: [{ rotate: '0deg' }]
-
                                     }} source={require('../assets/bluee.png')} />
 
                                 <Spacer paddingT={myHeight(4)} />
                                 <Text style={[styles.textCommon, {
                                     fontFamily: myFonts.heading,
                                     fontSize: myFontSize.large * 2.5,
+                                    color: myColors.text
+                                }]}>{playerCount[myPlayer]}</Text>
+                            </View>
+
+                            <Spacer paddingEnd={myWidth(8)} />
+                            <View style={{ width: myWidth(38), alignItems: 'center' }}>
+                            
+                                <Image
+                                    style={{
+                                        height: myWidth(38), width: myWidth(38),
+                                        resizeMode: 'cover', transform: [{ rotate: '0deg' }]
+
+                                    }} source={require('../assets/redd.png')} />
+
+                                <Spacer paddingT={myHeight(4)} />
+                                <Text style={[styles.textCommon, {
+                                    fontFamily: myFonts.heading,
+                                    fontSize: myFontSize.large * 2.5,
                                     color: 'black',
-                                }]}>{playerCount[1]}</Text>
+                                }]}>{playerCount[myPlayer==0?1:0]}</Text>
                             </View>
                         </View>
 
