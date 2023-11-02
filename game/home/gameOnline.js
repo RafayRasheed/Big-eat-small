@@ -15,13 +15,53 @@ import { useFocusEffect } from '@react-navigation/native';
 import database from '@react-native-firebase/database';
 import { RFValue } from 'react-native-responsive-fontsize';
 const ratio = myHeight(100) / myWidth(100)
-console.log(myHeight(100), ratio)
 // const lineContainerSize = RFValue(250)
 const lineContainerSize = myWidth(37) * ratio
 const lineWidthSize = lineContainerSize / 20
 const boxSize = (lineContainerSize - (lineWidthSize * 2)) / 3
 const mockSizes = [boxSize / 1.75, boxSize / 1.38, boxSize / 1.05]
 
+function winnerStayles(styleData) {
+    const code = styleData.code
+    const num = styleData.num
+    if (code == 'D1') {
+        return {
+            width: lineWidthSize, height: lineContainerSize,
+            left: (lineContainerSize / 2) - lineWidthSize / 2,
+            top: 0,
+            right: 0,
+            transform: [{ rotate: '-45deg' }]
+        }
+    }
+    if (code == 'D2') {
+        return {
+            width: lineWidthSize, height: lineContainerSize,
+            left: (lineContainerSize / 2) - lineWidthSize / 2,
+            top: 0,
+            right: 0,
+            transform: [{ rotate: '45deg' }]
+        }
+    }
+    if (code == 'H') {
+        return {
+            width: lineContainerSize, height: lineWidthSize,
+            left: 0,
+            top: (boxSize / 2) - (lineWidthSize / 2) + ((boxSize + lineWidthSize) * num),
+            right: 0,
+            transform: [{ rotate: '0deg' }]
+        }
+    }
+    if (code == 'V') {
+        return {
+            width: lineWidthSize, height: lineContainerSize,
+            left: (boxSize / 2) - (lineWidthSize / 2) + ((boxSize + lineWidthSize) * num),
+            top: 0,
+            right: 0,
+            transform: [{ rotate: '0deg' }]
+        }
+    }
+
+}
 const Lines = ({ deg = '0deg' }) => {
     const SingleLine = () => (
         <LinearGradient colors={['#e3b727', '#e6be3e', '#ebc754']}
@@ -145,34 +185,19 @@ export const GameOnline = ({ navigation, route }) => {
         setPlayerZeroMocks(ini0)
         setPlayerOneMocks(ini1)
 
-        database().ref(`/game/playing`).child(gameID).child('game').on('value', snapshot => {
+        const onValueChange = database().ref(`/game/playing`).child(gameID).child('game').on('value', snapshot => {
             if (snapshot.val()) {
 
                 const game = snapshot.val()
                 // const game = val.game
-                // console.log('User data: ', val);
-                // return
 
                 if (game.updateBy != myPlayer) {
-                    // console.log(game.updateBy != myPlayer)
-                    // const mockInLinesO = mockInLines
-                    // const playerZeroMocksO = playerZeroMocks
-                    // const playerOneMocksO = playerOneMocks
-                    // const currentO = current
-                    // const lastPlayerO = lastPlayer
-                    // const playerCountO = playerCount
-                    // const winnerModalO = winnerModal
-                    // const activePlayerO = activePlayer
+
 
                     const { mockInLines, playerZeroMocks, playerOneMocks, current,
                         lastPlayer, playerCount, winnerModal, isWinner,
                         activePlayer } = game
-                    // console.log('isWinner', isWinner)
-                    // console.log('current', current)
-                    // console.log('lastPlayer', lastPlayer)
-                    // console.log('activePlayer', activePlayer)
 
-                    // console.log('game', game.mockInLines == undefined)
 
                     setMockInLines([...mockInLines])
                     setPlayerZeroMocks([...playerZeroMocks])
@@ -203,10 +228,9 @@ export const GameOnline = ({ navigation, route }) => {
 
         })
 
-        // return () => {
-        //     database().ref(`/game/playing`).child(gameID).off('value', onValueChange)
-        //     console.log('dfg')
-        // }
+        return () => {
+            database().ref(`/game/playing`).child(gameID).child('game').off('value', onValueChange)
+        }
 
 
     }, [])
@@ -232,13 +256,13 @@ export const GameOnline = ({ navigation, route }) => {
         else {
             setTimeout(() => {
 
-                if(isWinner.player==myPlayer){
-    
+                if (isWinner.player == myPlayer) {
+
                     playSound('win')
                 }
-                else{
+                else {
                     playSound('game')
-    
+
                 }
             }, 100)
             setLastPlayer(isWinner.player)
@@ -326,6 +350,9 @@ export const GameOnline = ({ navigation, route }) => {
             winner.player = player
             winner.pos = d1
             isWimmer = true
+            winner.styleData = {
+                code: 'D1'
+            }
             winner.style = {
                 width: lineWidthSize, height: lineContainerSize,
                 left: (lineContainerSize / 2) - lineWidthSize / 2,
@@ -340,6 +367,9 @@ export const GameOnline = ({ navigation, route }) => {
             winner.player = player
             winner.pos = d2
             isWimmer = true
+            winner.styleData = {
+                code: 'D2'
+            }
             winner.style = {
                 width: lineWidthSize, height: lineContainerSize,
                 left: (lineContainerSize / 2) - lineWidthSize / 2,
@@ -355,6 +385,10 @@ export const GameOnline = ({ navigation, route }) => {
                 winner.player = player
                 winner.pos = xx
                 isWimmer = true
+                winner.styleData = {
+                    code: 'H',
+                    num: i
+                }
                 winner.style = {
                     width: lineContainerSize, height: lineWidthSize,
                     left: 0,
@@ -371,6 +405,10 @@ export const GameOnline = ({ navigation, route }) => {
                 winner.player = player
                 winner.pos = yy
                 isWimmer = true
+                winner.styleData = {
+                    code: 'V',
+                    num: i
+                }
                 winner.style = {
                     width: lineWidthSize, height: lineContainerSize,
                     left: (boxSize / 2) - (lineWidthSize / 2) + ((boxSize + lineWidthSize) * i),
@@ -380,7 +418,6 @@ export const GameOnline = ({ navigation, route }) => {
                 }
             }
         })
-        // console.log(isWimmer, winner)
         if (isWimmer) {
             return winner
         }
@@ -559,8 +596,8 @@ export const GameOnline = ({ navigation, route }) => {
                     <View style={{
                         borderBottomWidth: 5, paddingBottom: myHeight(1),
 
-                        borderColor: activePlayer != myPlayer ? myColors.player1 : '#00000030',
-                        backgroundColor: activePlayer != myPlayer ? myColors.player1 + '25' : '#00000005',
+                        borderColor: activePlayer != myPlayer ? myColors.player1 : '#00000040',
+                        backgroundColor: activePlayer != myPlayer ? myColors.player1 + '30' : '#00000000',
                     }}>
                         <View style={{
                             flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'flex-end',
@@ -582,7 +619,6 @@ export const GameOnline = ({ navigation, route }) => {
                                                 transform: [{ rotate: mock.id == current?.id ? '25deg' : '0deg' }]
                                             }} onPress={() => {
                                                 if (active) {
-                                                    // console.log(current?.id == mock.id)
                                                     const cu = (current && current?.id == mock.id) ? null : { ...mock, index }
                                                     setCurrent(cu)
                                                     updateData({ current: cu })
@@ -620,7 +656,6 @@ export const GameOnline = ({ navigation, route }) => {
 
                                 if (item.size != null) {
 
-                                    console.log(ratio.toFixed(2), 'player', item.player, myPlayer)
                                 }
                                 return (
                                     <TouchableOpacity activeOpacity={isActive ? 0.7 : 1}
@@ -665,11 +700,13 @@ export const GameOnline = ({ navigation, route }) => {
                             })
                         }
 
+
                         {
                             isWinner &&
+
                             <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
                                 colors={isWinner.player != myPlayer ? [myColors.player1, '#de645d', '#e88c87'] : [myColors.player2, '#5198d3', '#81c1f7']}
-                                style={[isWinner.style, {
+                                style={[winnerStayles(isWinner.styleData), {
                                     borderRadius: 1000, position: 'absolute',
                                     borderWidth: 0, elevation: 6, zIndex: 100,
 
@@ -681,8 +718,8 @@ export const GameOnline = ({ navigation, route }) => {
                     <View style={{
                         borderTopWidth: 5, paddingTop: myHeight(1),
 
-                        borderColor: activePlayer == myPlayer ? myColors.player2 : '#00000020',
-                        backgroundColor: activePlayer == myPlayer ? myColors.player2 + '35' : '#00000010',
+                        borderColor: activePlayer == myPlayer ? myColors.player2 : '#00000040',
+                        backgroundColor: activePlayer == myPlayer ? myColors.player2 + '35' : '#00000000',
 
                     }}>
                         <View style={{
@@ -711,9 +748,7 @@ export const GameOnline = ({ navigation, route }) => {
                                                         index,
                                                     }
                                                     const cu = (current && current?.id == mock.id) ? null : { ...s }
-                                                    // console.log(cu)
                                                     setCurrent(cu)
-                                                    // // console.log('----', { current: cu })
                                                     // updateData({ current: cu })
 
                                                 } else if (activePlayer != mock.player && mock.show != false) {
@@ -786,7 +821,7 @@ export const GameOnline = ({ navigation, route }) => {
 
                             <Spacer paddingEnd={myWidth(8)} />
                             <View style={{ width: myWidth(38), alignItems: 'center' }}>
-                            
+
                                 <Image
                                     style={{
                                         height: myWidth(38), width: myWidth(38),
@@ -799,7 +834,7 @@ export const GameOnline = ({ navigation, route }) => {
                                     fontFamily: myFonts.heading,
                                     fontSize: myFontSize.large * 2.5,
                                     color: 'black',
-                                }]}>{playerCount[myPlayer==0?1:0]}</Text>
+                                }]}>{playerCount[myPlayer == 0 ? 1 : 0]}</Text>
                             </View>
                         </View>
 
