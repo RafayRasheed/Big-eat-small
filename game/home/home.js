@@ -228,7 +228,7 @@ export const Home = ({ navigation, route }) => {
             .ref(`/game/playing`).child(ID).on('value', snapshot => {
                 const s = snapshot.val()
                 // console.log('User data: ', );
-                if (s.player2) {
+                if (s && s.player2) {
                     const found = {
                         ...s,
                         key: ID
@@ -321,6 +321,13 @@ export const Home = ({ navigation, route }) => {
 
 
     }
+    function OnStartOffilne() {
+        playSound('click')
+        navigation.navigate('GameOffline')
+
+
+
+    }
     function resetFindModal() {
         TranY.value = -val
         setFindPlayerModal(false)
@@ -409,7 +416,7 @@ export const Home = ({ navigation, route }) => {
 
                         }} source={require('../assets/check.png')} />
                     <Spacer paddingT={myHeight(2.5)} />
-                    <MyButton text={'Start Game'} size={myWidth(50)} fun={OnStart} />
+                    <MyButton text={'Start Game'} size={myWidth(50)} fun={OnStartOffilne} />
 
                     <Spacer paddingT={myHeight(7)} />
 
@@ -436,7 +443,7 @@ export const Home = ({ navigation, route }) => {
                             source={require('../assets/board3.png')} resizeMode='contain'
                         >
                             <View style={{
-                                width: '100%', height: myWidth(26),
+                                width: '100%', height: myWidth(28.5),
                                 alignItems: 'center', justifyContent: 'flex-end',
                                 // backgroundColor:'red'
                             }}>
@@ -466,7 +473,7 @@ export const Home = ({ navigation, route }) => {
                                             source={require('../assets/bluee.png')} />
                                         <Spacer paddingT={myWidth(2)} />
 
-                                        <Text numberOfLines={1} style={[styles.textCommon, {
+                                        <Text numberOfLines={1 } style={[styles.textCommon, {
                                             fontFamily: myFonts.headingBold,
                                             fontSize: myFontSize.medium3,
                                             color: myColors.woodD,

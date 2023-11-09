@@ -14,8 +14,11 @@ import SoundPlayer from 'react-native-sound-player';
 import { useFocusEffect } from '@react-navigation/native';
 import database from '@react-native-firebase/database';
 import { RFValue } from 'react-native-responsive-fontsize';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 const ratio = myHeight(100) / myWidth(100)
 // const lineContainerSize = RFValue(250)
+const fullWidth = myWidth(100)
+const timePerChal = 10000
 const lineContainerSize = myWidth(37) * ratio
 const lineWidthSize = lineContainerSize / 20
 const boxSize = (lineContainerSize - (lineWidthSize * 2)) / 3
@@ -130,6 +133,18 @@ export const GameOnline = ({ navigation, route }) => {
     const [activePlayer, setActivePlayer] = useState(lastPlayer)
     const [showYesNoModal, setShowYesNoModal] = useState(false)
 
+    const TimeLine0 = useSharedValue(0);
+    const TimeLine1 = useSharedValue(0);
+    const TimeLine0Style = useAnimatedStyle(() => {
+        return {
+            transform: [{ translateX: -TimeLine0.value}],
+        };
+    });
+    const TimeLine1Style = useAnimatedStyle(() => {
+        return {
+            transform: [{ translateX: -TimeLine1.value}],
+        };
+    });
     function updateData(data) {
         // const s = new Date().toUTCString()
         const dataU = data ? data : { mockInLines, playerZeroMocks, playerOneMocks, current, lastPlayer, playerCount, winnerModal, activePlayer }
@@ -137,6 +152,32 @@ export const GameOnline = ({ navigation, route }) => {
         database()
             .ref(`/game/playing`).child(gameID).child('game')
             .update(dataU)
+    }
+    useEffect(()=>{
+
+        
+        PlayersTimer(activePlayer)
+
+    },[activePlayer])
+
+    function PlayersTimer(activePlayer){
+        TimeLine0.value = 0
+        TimeLine1.value = 0
+        if(activePlayer==1){
+            TimeLine1.value=withTiming(fullWidth, { duration: timePerChal })
+            setTimeout(()=>{
+                setActivePlayer(0)
+                // Alert.alert('Timeout 1')
+            },timePerChal)  
+        }
+        else{
+            TimeLine0.value=withTiming(fullWidth, { duration: timePerChal })
+            setTimeout(()=>{
+                setActivePlayer(1)
+
+                // Alert.alert('Timeout 0')
+            },timePerChal)  
+        }
     }
 
     useFocusEffect(
@@ -594,9 +635,11 @@ export const GameOnline = ({ navigation, route }) => {
                 <View style={{ flex: 1, justifyContent: 'space-between', }}>
                     {/* Player 0 Portion */}
                     <View style={{
-                        borderBottomWidth: 5, paddingBottom: myHeight(1),
+                        borderBottomWidth: myHeight(0.9),
+                        // borderColor: activePlayer != myPlayer ? myColors.yellow1 : '#00000040',
+                        borderColor: '#00000060',
+                         paddingBottom: myHeight(1),
 
-                        borderColor: activePlayer != myPlayer ? myColors.player1 : '#00000040',
                         backgroundColor: activePlayer != myPlayer ? myColors.player1 + '30' : '#00000000',
                     }}>
                         <View style={{
@@ -640,6 +683,15 @@ export const GameOnline = ({ navigation, route }) => {
                             }
                         </View>
 
+                        <Animated.View 
+                        style={[{height:myHeight(0.9),
+                            bottom:-myHeight(0.9),
+                             width:'100%',position:'absolute',
+
+                         backgroundColor:activePlayer != myPlayer ? myColors.player1 : 'transparent',
+                        },TimeLine0Style ]}
+
+                        />
                     </View>
                     <View style={{
                         width: lineContainerSize, height: lineContainerSize,
@@ -716,9 +768,10 @@ export const GameOnline = ({ navigation, route }) => {
                     </View>
                     {/* Player 1 Portion */}
                     <View style={{
-                        borderTopWidth: 5, paddingTop: myHeight(1),
+                        borderTopWidth: myHeight(0.9), paddingTop: myHeight(1),
 
-                        borderColor: activePlayer == myPlayer ? myColors.player2 : '#00000040',
+                        borderColor:'#00000060',
+                        // borderColor: activePlayer == myPlayer ? myColors.player2 : '#00000040',
                         backgroundColor: activePlayer == myPlayer ? myColors.player2 + '35' : '#00000000',
 
                     }}>
@@ -769,6 +822,14 @@ export const GameOnline = ({ navigation, route }) => {
                                 })
                             }
                         </View>
+                        <Animated.View 
+                        style={[{height:myHeight(0.9),
+                            top:-myHeight(0.9),
+                             width:'100%',position:'absolute',
+
+                         backgroundColor:activePlayer == myPlayer ?myColors.player2 :'transparent',
+                       
+                       },TimeLine1Style ]}/>
 
                     </View>
                 </View>

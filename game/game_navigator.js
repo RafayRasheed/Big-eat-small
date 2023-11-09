@@ -41,7 +41,7 @@ export const GameNavigator = ({ navigation, route }) => {
             }}
         >
             <AppTAB.Screen component={Home} name="Home" />
-            {/* <AppTAB.Screen component={Game} name="Game" /> */}
+            <AppTAB.Screen component={Game} name="GameOffline" />
             <AppTAB.Screen component={GameOnline} name="Game" />
 
             <AppTAB.Screen component={Winner} name="Winner" />
