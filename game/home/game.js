@@ -374,6 +374,7 @@ export const Game = ({ navigation }) => {
 
         }
         playSound('place')
+    console.log(mockInLines)
 
         setChange(!change)
 
@@ -435,7 +436,6 @@ export const Game = ({ navigation }) => {
                                                 transform: [{ rotate: mock.id == current?.id ? '25deg' : '0deg' }]
                                             }} onPress={() => {
                                                 if (active) {
-                                                    console.log(current?.id == mock.id)
                                                     setCurrent((current && current?.id == mock.id) ? null : { ...mock, index })
                                                 } else if (activePlayer != mock.player && mock.show != false) {
                                                     playSound('wrong')
