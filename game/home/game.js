@@ -84,7 +84,7 @@ export const Game = ({ navigation }) => {
     const [winnerModal, setShowWinnerModal] = useState(false)
     const [activePlayer, setActivePlayer] = useState(lastPlayer)
     const [showYesNoModal, setShowYesNoModal] = useState(false)
-
+    const [dummyBoard, setDummyBoard] = useState([])
     useFocusEffect(
         React.useCallback(() => {
 
@@ -122,6 +122,11 @@ export const Game = ({ navigation }) => {
 
     useEffect(() => {
         const { iniMock, ini0, ini1 } = generateMockInLines()
+        let mo = []
+        iniMock.map((it)=>{
+           mo.push(it.id)
+        })
+        setDummyBoard(Array.from(Array(9).keys()))
         setMockInLines(iniMock)
         setPlayerZeroMocks(ini0)
         setPlayerOneMocks(ini1)
@@ -280,6 +285,8 @@ export const Game = ({ navigation }) => {
             return false
         }
     }
+
+
     function isMorePlay(CheckPlayer, maxSize, newArray) {
         let morePlay = false
         newArray.map(({ player, size }) => {
@@ -374,9 +381,9 @@ export const Game = ({ navigation }) => {
 
         }
         playSound('place')
-    console.log(mockInLines)
-
-        setChange(!change)
+console.log(minimax(dummyBoard, 0))
+        setChange(!change
+            )
 
     }
     // 00 01 02
@@ -400,6 +407,139 @@ export const Game = ({ navigation }) => {
         return (
             null
         )
+    }
+    function checkWin(newBoard, player) {
+        let isWimmer = false
+        const d1 = ['00', '11', '22']
+        let d1C = 0
+        let d2C = 0
+        const d2 = ['02', '11', '20']
+
+        const x = [[], [], []]
+        const y = [[], [], []]
+
+        let allCount = 0
+
+        newBoard.map((item, i) => {
+            if (item.player == player) {
+                // for Diagonal 1
+                if (d1.findIndex(it => it == item.id) != -1) {
+                    d1C += 1
+                }
+
+                // for Diagonal 2
+                if (d2.findIndex(it => it == item.id) != -1) {
+                    d2C += 1
+                }
+
+                //for horizontal
+                x[item.posX] = [...x[item.posX], item.id]
+
+                //for vertical
+                y[item.posY] = [...y[item.posY], item.id]
+
+            }
+            if (item.player != null) {
+                allCount += 1
+            }
+        })
+        // Check Diagonal 1
+        if (d1C == 3) {
+            isWimmer = true
+
+        }
+
+        // Check Diagonal 2
+        if (d2C == 3 && !isWimmer) {
+            isWimmer = true
+
+        }
+
+        // Check Horizontal
+        x.map((xx, i) => {
+            if (xx.length >= 3 && !isWimmer) {
+                isWimmer = true
+
+            }
+        })
+
+        // Check Vertical
+        y.map((yy, i) => {
+            if (yy.length >= 3 && !isWimmer) {
+                isWimmer = true
+
+            }
+        })
+        // console.log(isWimmer, winner)
+        if (isWimmer) {
+            return true
+        }
+        else if (allCount == 9) {
+            return null
+        }
+        else {
+            return false
+        }
+    }
+    function emptySquares() {
+        return mockInLines.filter(x=>x.player==null)
+    }
+    function findInd(id){
+        return mockInLines.indexOf(x=>x.id==id)
+    }
+    function minimax(newBoard, player) {
+        const aiPlayer = 0
+        const huPlayer = 1
+        var availSpots = emptySquares();
+        if (checkWin(newBoard, huPlayer)) {
+            return { score: -10 };
+        } else if (checkWin(newBoard, aiPlayer)) {
+            return { score: 10 };
+        } else if (availSpots.length === 0) {
+            return { score: 0 };
+        }
+        var moves = [];
+        console.log(newBoard )
+        for (var i = 0; i < availSpots.length; i++) {
+            var move = {};
+            move.index = newBoard[findInd(availSpots[i].id)];
+
+            newBoard[findInd(availSpots[i].id)] = player;
+
+            if (player == aiPlayer) {
+                var result = minimax(newBoard, huPlayer);
+                move.score = result.score;
+            } else {
+                var result = minimax(newBoard, aiPlayer);
+                move.score = result.score;
+            }
+
+            newBoard[findInd(availSpots[i].id)] = move.index;
+
+            moves.push(move);
+        }
+        // console.log('moves', moves)
+
+        var bestMove;
+        if (player === aiPlayer) {
+            var bestScore = -10000;
+            for (var i = 0; i < moves.length; i++) {
+                if (moves[i].score > bestScore) {
+                    bestScore = moves[i].score;
+                    bestMove = i;
+                }
+            }
+        } else {
+            var bestScore = 10000;
+            for (var i = 0; i < moves.length; i++) {
+                if (moves[i].score < bestScore) {
+                    bestScore = moves[i].score;
+                    bestMove = i;
+                }
+            }
+        }
+
+        return moves[bestMove];
     }
     return (
         <>
