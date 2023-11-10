@@ -137,12 +137,12 @@ export const GameOnline = ({ navigation, route }) => {
     const TimeLine1 = useSharedValue(0);
     const TimeLine0Style = useAnimatedStyle(() => {
         return {
-            transform: [{ translateX: -TimeLine0.value}],
+            transform: [{ translateX: -TimeLine0.value }],
         };
     });
     const TimeLine1Style = useAnimatedStyle(() => {
         return {
-            transform: [{ translateX: -TimeLine1.value}],
+            transform: [{ translateX: -TimeLine1.value }],
         };
     });
     function updateData(data) {
@@ -153,30 +153,30 @@ export const GameOnline = ({ navigation, route }) => {
             .ref(`/game/playing`).child(gameID).child('game')
             .update(dataU)
     }
-    useEffect(()=>{
+    useEffect(() => {
 
-        
+
         PlayersTimer(activePlayer)
 
-    },[activePlayer])
+    }, [activePlayer])
 
-    function PlayersTimer(activePlayer){
+    function PlayersTimer(activePlayer) {
         TimeLine0.value = 0
         TimeLine1.value = 0
-        if(activePlayer==1){
-            TimeLine1.value=withTiming(fullWidth, { duration: timePerChal })
-            setTimeout(()=>{
+        if (activePlayer == 1) {
+            TimeLine1.value = withTiming(fullWidth, { duration: timePerChal })
+            setTimeout(() => {
                 setActivePlayer(0)
                 // Alert.alert('Timeout 1')
-            },timePerChal)  
+            }, timePerChal)
         }
-        else{
-            TimeLine0.value=withTiming(fullWidth, { duration: timePerChal })
-            setTimeout(()=>{
+        else {
+            TimeLine0.value = withTiming(fullWidth, { duration: timePerChal })
+            setTimeout(() => {
                 setActivePlayer(1)
 
                 // Alert.alert('Timeout 0')
-            },timePerChal)  
+            }, timePerChal)
         }
     }
 
@@ -638,7 +638,7 @@ export const GameOnline = ({ navigation, route }) => {
                         borderBottomWidth: myHeight(0.9),
                         // borderColor: activePlayer != myPlayer ? myColors.yellow1 : '#00000040',
                         borderColor: '#00000060',
-                         paddingBottom: myHeight(1),
+                        paddingBottom: myHeight(1),
 
                         backgroundColor: activePlayer != myPlayer ? myColors.player1 + '30' : '#00000000',
                     }}>
@@ -683,13 +683,14 @@ export const GameOnline = ({ navigation, route }) => {
                             }
                         </View>
 
-                        <Animated.View 
-                        style={[{height:myHeight(0.9),
-                            bottom:-myHeight(0.9),
-                             width:'100%',position:'absolute',
+                        <Animated.View
+                            style={[{
+                                height: myHeight(0.9),
+                                bottom: -myHeight(0.9),
+                                width: '100%', position: 'absolute',
 
-                         backgroundColor:activePlayer != myPlayer ? myColors.player1 : 'transparent',
-                        },TimeLine0Style ]}
+                                backgroundColor: activePlayer != myPlayer ? myColors.player1 : 'transparent',
+                            }, TimeLine0Style]}
 
                         />
                     </View>
@@ -770,7 +771,7 @@ export const GameOnline = ({ navigation, route }) => {
                     <View style={{
                         borderTopWidth: myHeight(0.9), paddingTop: myHeight(1),
 
-                        borderColor:'#00000060',
+                        borderColor: '#00000060',
                         // borderColor: activePlayer == myPlayer ? myColors.player2 : '#00000040',
                         backgroundColor: activePlayer == myPlayer ? myColors.player2 + '35' : '#00000000',
 
@@ -822,14 +823,15 @@ export const GameOnline = ({ navigation, route }) => {
                                 })
                             }
                         </View>
-                        <Animated.View 
-                        style={[{height:myHeight(0.9),
-                            top:-myHeight(0.9),
-                             width:'100%',position:'absolute',
+                        <Animated.View
+                            style={[{
+                                height: myHeight(0.9),
+                                top: -myHeight(0.9),
+                                width: '100%', position: 'absolute',
 
-                         backgroundColor:activePlayer == myPlayer ?myColors.player2 :'transparent',
-                       
-                       },TimeLine1Style ]}/>
+                                backgroundColor: activePlayer == myPlayer ? myColors.player2 : 'transparent',
+
+                            }, TimeLine1Style]} />
 
                     </View>
                 </View>
