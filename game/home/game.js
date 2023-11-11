@@ -12,6 +12,8 @@ import { MyButton, YesNoModal, playSound } from '../component/components';
 import { initialMockInLines, initialMockInLines2, player0Mocks, player0Mocks2, player1Mocks, player1Mocks2 } from './data';
 import SoundPlayer from 'react-native-sound-player';
 import { useFocusEffect } from '@react-navigation/native';
+import { minimax } from './checking';
+import { current } from '@reduxjs/toolkit';
 
 const lineContainerSize = myWidth(75)
 const lineWidthSize = lineContainerSize / 20
@@ -69,6 +71,7 @@ function generateMockInLines() {
     return { iniMock, ini0, ini1 }
 }
 
+
 export const Game = ({ navigation }) => {
     const [change, setChange] = useState(false)
 
@@ -76,7 +79,7 @@ export const Game = ({ navigation }) => {
     const [playerZeroMocks, setPlayerZeroMocks] = useState([])
     const [playerOneMocks, setPlayerOneMocks] = useState([])
     const [current, setCurrent] = useState(null)
-    const [lastPlayer, setLastPlayer] = useState(0)
+    const [lastPlayer, setLastPlayer] = useState(1)
 
     const [playerCount, setPlayerCount] = useState([0, 0])
     const [isWinner, setIsWinner] = useState(false)
@@ -85,6 +88,34 @@ export const Game = ({ navigation }) => {
     const [activePlayer, setActivePlayer] = useState(lastPlayer)
     const [showYesNoModal, setShowYesNoModal] = useState(false)
     const [dummyBoard, setDummyBoard] = useState([])
+    // let dummyBoard2 = dummyBoard
+
+    useEffect(() => {
+        if (activePlayer == 0) {
+           BotPlay()
+            // setChange(!change)
+        }
+
+    }, [activePlayer])
+
+    function BotPlay(){
+        let mo = []
+        mockInLines.map((it) => {
+            mo.push({ ...it })
+        })
+        const s = minimax(mo, 0, mo)
+        let tt =null
+        playerZeroMocks.map((mock, index)=>{
+            if(mock.show){
+                tt = {...mock, index}
+            }
+        })
+        setCurrent(tt)
+        
+        setTimeout(()=>{
+                addMock(s, s.index, tt)
+            },0)
+    }
     useFocusEffect(
         React.useCallback(() => {
 
@@ -123,13 +154,17 @@ export const Game = ({ navigation }) => {
     useEffect(() => {
         const { iniMock, ini0, ini1 } = generateMockInLines()
         let mo = []
-        iniMock.map((it)=>{
-           mo.push(it.id)
+        iniMock.map((it) => {
+            const { id, player, size } = it
+            mo.push({ id, player, size })
+
         })
-        setDummyBoard(Array.from(Array(9).keys()))
+        // setDummyBoard(Array.from(Array(9).keys()))
+
         setMockInLines(iniMock)
         setPlayerZeroMocks(ini0)
         setPlayerOneMocks(ini1)
+        setDummyBoard([...mo])
 
     }, [])
 
@@ -300,14 +335,14 @@ export const Game = ({ navigation }) => {
     }
 
 
-    function addMock(item, index, player, size) {
+    function addMock(item, index, current) {
         // let playerZero = []
         // let playerOne = []
         // const id = posX.toString() + posY.toString()
         const newItem = {
             ...item,
-            player,
-            size,
+            player: current.player,
+            size: current.size,
         }
 
         const newArray = mockInLines
@@ -327,6 +362,7 @@ export const Game = ({ navigation }) => {
 
         setMockInLines(newArray)
         setCurrent(null)
+        // console.log(newArray)
         const win = checkWinner(activePlayer, newArray)
 
         if (win && win.player != null) {
@@ -381,9 +417,9 @@ export const Game = ({ navigation }) => {
 
         }
         playSound('place')
-console.log(minimax(dummyBoard, 0))
-        setChange(!change
-            )
+
+
+        setChange(!change)
 
     }
     // 00 01 02
@@ -408,139 +444,8 @@ console.log(minimax(dummyBoard, 0))
             null
         )
     }
-    function checkWin(newBoard, player) {
-        let isWimmer = false
-        const d1 = ['00', '11', '22']
-        let d1C = 0
-        let d2C = 0
-        const d2 = ['02', '11', '20']
 
-        const x = [[], [], []]
-        const y = [[], [], []]
 
-        let allCount = 0
-
-        newBoard.map((item, i) => {
-            if (item.player == player) {
-                // for Diagonal 1
-                if (d1.findIndex(it => it == item.id) != -1) {
-                    d1C += 1
-                }
-
-                // for Diagonal 2
-                if (d2.findIndex(it => it == item.id) != -1) {
-                    d2C += 1
-                }
-
-                //for horizontal
-                x[item.posX] = [...x[item.posX], item.id]
-
-                //for vertical
-                y[item.posY] = [...y[item.posY], item.id]
-
-            }
-            if (item.player != null) {
-                allCount += 1
-            }
-        })
-        // Check Diagonal 1
-        if (d1C == 3) {
-            isWimmer = true
-
-        }
-
-        // Check Diagonal 2
-        if (d2C == 3 && !isWimmer) {
-            isWimmer = true
-
-        }
-
-        // Check Horizontal
-        x.map((xx, i) => {
-            if (xx.length >= 3 && !isWimmer) {
-                isWimmer = true
-
-            }
-        })
-
-        // Check Vertical
-        y.map((yy, i) => {
-            if (yy.length >= 3 && !isWimmer) {
-                isWimmer = true
-
-            }
-        })
-        // console.log(isWimmer, winner)
-        if (isWimmer) {
-            return true
-        }
-        else if (allCount == 9) {
-            return null
-        }
-        else {
-            return false
-        }
-    }
-    function emptySquares() {
-        return mockInLines.filter(x=>x.player==null)
-    }
-    function findInd(id){
-        return mockInLines.indexOf(x=>x.id==id)
-    }
-    function minimax(newBoard, player) {
-        const aiPlayer = 0
-        const huPlayer = 1
-        var availSpots = emptySquares();
-        if (checkWin(newBoard, huPlayer)) {
-            return { score: -10 };
-        } else if (checkWin(newBoard, aiPlayer)) {
-            return { score: 10 };
-        } else if (availSpots.length === 0) {
-            return { score: 0 };
-        }
-        var moves = [];
-        console.log(newBoard )
-        for (var i = 0; i < availSpots.length; i++) {
-            var move = {};
-            move.index = newBoard[findInd(availSpots[i].id)];
-
-            newBoard[findInd(availSpots[i].id)] = player;
-
-            if (player == aiPlayer) {
-                var result = minimax(newBoard, huPlayer);
-                move.score = result.score;
-            } else {
-                var result = minimax(newBoard, aiPlayer);
-                move.score = result.score;
-            }
-
-            newBoard[findInd(availSpots[i].id)] = move.index;
-
-            moves.push(move);
-        }
-        // console.log('moves', moves)
-
-        var bestMove;
-        if (player === aiPlayer) {
-            var bestScore = -10000;
-            for (var i = 0; i < moves.length; i++) {
-                if (moves[i].score > bestScore) {
-                    bestScore = moves[i].score;
-                    bestMove = i;
-                }
-            }
-        } else {
-            var bestScore = 10000;
-            for (var i = 0; i < moves.length; i++) {
-                if (moves[i].score < bestScore) {
-                    bestScore = moves[i].score;
-                    bestMove = i;
-                }
-            }
-        }
-
-        return moves[bestMove];
-    }
     return (
         <>
             <ImageBackground
@@ -622,7 +527,7 @@ console.log(minimax(dummyBoard, 0))
                                         }}
                                         onPress={() => {
                                             if (isActive) {
-                                                addMock(item, index, current?.player, current?.size)
+                                                addMock(item, index, current)
                                             }
                                             else {
                                                 playSound('wrong')
