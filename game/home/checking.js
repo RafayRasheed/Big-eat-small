@@ -80,8 +80,21 @@ function emptySquares(newBoard) {
 function findInd(dummyBoard, id) {
     return dummyBoard.findIndex(x => x.id == id)
 }
-export function minimax(newBoard, player, full) {
-    // const newBoard = [...newBoard1]
+function printPlayer(newBoa){
+    const newBoard =[]
+    newBoa.map((it)=>{
+        newBoard.push(it.player)
+    })
+    console.log(newBoard[0], newBoard[1], newBoard[2])
+    console.log(newBoard[3], newBoard[4], newBoard[5])
+    console.log(newBoard[6], newBoard[7], newBoard[8])
+}
+export function minimax(newBoard0, player, full) {
+    const newBoard= []
+    newBoard0.map((it)=>{
+        newBoard.push(it)
+    }) 
+       // const newBoard = [...newBoard1]
     const aiPlayer = 0
     const huPlayer = 1
     let availSpots = emptySquares(newBoard);
@@ -105,25 +118,31 @@ export function minimax(newBoard, player, full) {
         move.index=ind
         move.size = 1
         newBoard[ind].player = player;
+        console.log('*************' )
+        printPlayer(newBoard)
         if (player == aiPlayer) {
             let result = minimax(newBoard, huPlayer, full);
+         
+            move.score = result.score;
             console.log('bestMove0' , move.score)
 
-            move.score = result.score;
         } else {
             let result = minimax(newBoard, aiPlayer, full);
             move.score = result.score;
             console.log('bestMove1' , move.score)
+
         }
 
 
         newBoard[ind] = move;
+        console.log('==============', move)
+        printPlayer(newBoard)
 
         moves.push(move);
     }
 
     // return
-
+    
     let bestMove;
     if (player === aiPlayer) {
         let bestScore = -10000;
@@ -139,6 +158,7 @@ export function minimax(newBoard, player, full) {
             if (moves[i].score < bestScore) {
                 bestScore = moves[i].score;
                 bestMove = i;
+
             }
         }
     }
