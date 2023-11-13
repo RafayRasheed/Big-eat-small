@@ -73,36 +73,8 @@ function checkWin0(newBoard, player) {
     }
 }
 
-function checkWin(board, player) {
 
-    const winCombos = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [6, 4, 2]
-    ]
-    
-    let plays = board.reduce((a, e, i) =>
-        (e === player) ? a.concat(i) : a, []);
-    let gameWon = null;
-    for (let [index, win] of winCombos.entries()) {
-        if (win.every(elem => plays.indexOf(elem) > -1)) {
-            gameWon = { index: index, player: player };
-            break;
-        }
-    }
-    return gameWon;
-}
-function emptySquares(newBoard) {
-    // console.log(dummyBoard2)
 
-    return newBoard.filter(x =>  typeof x == 'number')
-    // return newBoard.filter(x =>  x.player == null)
-}
 function findInd(dummyBoard, id) {
     return dummyBoard.findIndex(x => x.id == id)
 }
@@ -115,15 +87,7 @@ function printPlayer0(newBoa){
     console.log(newBoard[3], newBoard[4], newBoard[5])
     console.log(newBoard[6], newBoard[7], newBoard[8])
 }
-function printPlayer(newBoa){
-    const newBoard =[]
-    newBoa.map((it)=>{
-        newBoard.push(it)
-    })
-    console.log(newBoard[0], newBoard[1], newBoard[2])
-    console.log(newBoard[3], newBoard[4], newBoard[5])
-    console.log(newBoard[6], newBoard[7], newBoard[8])
-}
+
 export function minimax0(newBoard0, player, full) {
     const newBoard= []
     newBoard0.map((it)=>{
@@ -200,7 +164,46 @@ export function minimax0(newBoard0, player, full) {
 
     return moves[bestMove];
 }
-export function minimax(newBoard0, player, full) {
+function checkWin(board, player) {
+
+    const winCombos = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [6, 4, 2]
+    ]
+    
+    let plays = board.reduce((a, e, i) =>
+        (e === player) ? a.concat(i) : a, []);
+    let gameWon = null;
+    for (let [index, win] of winCombos.entries()) {
+        if (win.every(elem => plays.indexOf(elem) > -1)) {
+            gameWon = { index: index, player: player };
+            break;
+        }
+    }
+    return gameWon;
+}
+function emptySquares(newBoard) {
+    // console.log(dummyBoard2)
+
+    return newBoard.filter(x =>  typeof x == 'number')
+    // return newBoard.filter(x =>  x.player == null)
+}
+function printPlayer(newBoa){
+    const newBoard =[]
+    newBoa.map((it)=>{
+        newBoard.push(it)
+    })
+    console.log(newBoard[0], newBoard[1], newBoard[2])
+    console.log(newBoard[3], newBoard[4], newBoard[5])
+    console.log(newBoard[6], newBoard[7], newBoard[8])
+}
+export function minimax(newBoard0, player) {
     const newBoard= []
     newBoard0.map((it)=>{
         newBoard.push(it)
@@ -209,9 +212,9 @@ export function minimax(newBoard0, player, full) {
     const aiPlayer = 'red'
     const huPlayer = 'blue'
     let availSpots = emptySquares(newBoard);
-    if (checkWin(newBoard, huPlayer, full)) {
+    if (checkWin(newBoard, huPlayer)) {
         return { score: -10 };
-    } else if (checkWin(newBoard, aiPlayer, full)) {
+    } else if (checkWin(newBoard, aiPlayer)) {
         return { score: 10 };
     } else if (availSpots.length === 0) {
         return { score: 0 };
