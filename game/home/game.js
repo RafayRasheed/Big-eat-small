@@ -100,16 +100,21 @@ export const Game = ({ navigation }) => {
 
     function BotPlay(){
         let mo = []
-        mockInLines.map((it) => {
-            mo.push({ ...it })
+        let mo2 = []
+        mockInLines.map((it, i) => {
+            mo2.push({ ...it })
+            mo.push(it.player==0?'red':it.player==1?'blue':i)
         })
         console.log('----------------------------------------------------------')
         console.log('----------------------------------------------------------')
         console.log('----------------------------------------------------------')
         console.log('----------------------------------------------------------')
         console.log('----------------------------------------------------------')
-        const s = minimax(mo, 0, mo)
+        const s = minimax(mo, 'red', mo2)
+        console.log(s)
+        return
         let tt =null
+        let ind =mockInLines.findIndex(x => x.id == s.index.id)
         playerZeroMocks.map((mock, index)=>{
             if(mock.show){
                 tt = {...mock, index}
@@ -118,7 +123,7 @@ export const Game = ({ navigation }) => {
         setCurrent(tt)
         
         setTimeout(()=>{
-                addMock(s, s.index, tt)
+                addMock(s.index, ind, tt)
             },0)
     }
     useFocusEffect(
