@@ -37,7 +37,7 @@ function checkWin(board, player)
     }
     return gameWon;
 }
-function minimax(newBoard, depth, alpha, beta, player)
+export function minimax2(newBoard, depth, alpha, beta, player)
 {
     opponent_mark = 'Z'
     player_mark = 'X'
@@ -67,7 +67,7 @@ function minimax(newBoard, depth, alpha, beta, player)
         {
             newBoard[availSpots[i]] = player; // set the empty spot to the current player
             
-            var value = minimax(newBoard, depth+1, alpha, beta, player_mark);
+            var value = minimax2(newBoard, depth+1, alpha, beta, player_mark);
             if(value.score < bestScore)
             {
                 bestScore = value.score;
@@ -92,7 +92,7 @@ function minimax(newBoard, depth, alpha, beta, player)
         {
             newBoard[availSpots[i]] = player; // set the empty spot to the current player
 
-            var value = minimax(newBoard, depth+1, alpha, beta, opponent_mark);
+            var value = minimax2(newBoard, depth+1, alpha, beta, opponent_mark);
             if(value.score > bestScore)
             {
                 bestScore = value.score;
@@ -112,7 +112,7 @@ function minimax(newBoard, depth, alpha, beta, player)
 }
 function mak(){
     
-const i = minimax(origBoard, 0, -10000, 10000,current).index
+const i = minimax2(origBoard, 0, -10000, 10000,current).index
 console.log('-----------------------------',i)
 origBoard[i] = current
 console.log(origBoard[0], origBoard[1], origBoard[2])
@@ -125,4 +125,3 @@ if(s<9){
 }
 
 }
- mak()

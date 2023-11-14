@@ -102,7 +102,8 @@ export const Game = ({ navigation }) => {
         let mo = []
         let mo2 = []
         mockInLines.map((it, i) => {
-            mo2.push({ ...it })
+            const {player, size} = it
+            mo2.push({ player, size })
             mo.push(it.player==0?'red':it.player==1?'blue':i)
         })
         console.log('----------------------------------------------------------')
@@ -110,8 +111,8 @@ export const Game = ({ navigation }) => {
         console.log('----------------------------------------------------------')
         console.log('----------------------------------------------------------')
         console.log('----------------------------------------------------------')
-        const s = minimax(mo, 'red', mo2)
-        console.log(s)
+        // const s = minimax(mo, 'red', mo2)
+        console.log(mo2)
         return
         let tt =null
         let ind =mockInLines.findIndex(x => x.id == s.index.id)
