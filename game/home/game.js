@@ -14,6 +14,7 @@ import SoundPlayer from 'react-native-sound-player';
 import { useFocusEffect } from '@react-navigation/native';
 import { minimax } from './checking';
 import { current } from '@reduxjs/toolkit';
+import { minimax2 } from './checking2';
 
 const lineContainerSize = myWidth(75)
 const lineWidthSize = lineContainerSize / 20
@@ -111,8 +112,8 @@ export const Game = ({ navigation }) => {
         console.log('----------------------------------------------------------')
         console.log('----------------------------------------------------------')
         console.log('----------------------------------------------------------')
-        // const s = minimax(mo, 'red', mo2)
-        console.log(mo2)
+        const s = minimax2(mo2,0, -10000, 10000,0)
+        console.log(s)
         return
         let tt =null
         let ind =mockInLines.findIndex(x => x.id == s.index.id)
