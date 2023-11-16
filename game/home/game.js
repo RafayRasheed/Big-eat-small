@@ -80,7 +80,7 @@ export const Game = ({ navigation }) => {
     const [playerZeroMocks, setPlayerZeroMocks] = useState([])
     const [playerOneMocks, setPlayerOneMocks] = useState([])
     const [current, setCurrent] = useState(null)
-    const [lastPlayer, setLastPlayer] = useState(1)
+    const [lastPlayer, setLastPlayer] = useState(0)
 
     const [playerCount, setPlayerCount] = useState([0, 0])
     const [isWinner, setIsWinner] = useState(false)
@@ -88,35 +88,28 @@ export const Game = ({ navigation }) => {
     const [winnerModal, setShowWinnerModal] = useState(false)
     const [activePlayer, setActivePlayer] = useState(lastPlayer)
     const [showYesNoModal, setShowYesNoModal] = useState(false)
-    const [dummyBoard, setDummyBoard] = useState([])
+    const [start, setStart] = useState(false)
     // let dummyBoard2 = dummyBoard
 
     useEffect(() => {
-        if (activePlayer == 0) {
+        if (activePlayer == 0 && start) {
            BotPlay()
             // setChange(!change)
         }
 
-    }, [activePlayer])
+    }, [activePlayer, start])
 
     function BotPlay(){
-        let mo = []
         let mo2 = []
         mockInLines.map((it, i) => {
             const {player, size} = it
             mo2.push({ player, size })
-            mo.push(it.player==0?'red':it.player==1?'blue':i)
         })
-        console.log('----------------------------------------------------------')
-        console.log('----------------------------------------------------------')
-        console.log('----------------------------------------------------------')
-        console.log('----------------------------------------------------------')
-        console.log('----------------------------------------------------------')
+ 
         const s = minimax2(mo2,0, -10000, 10000,0)
-        console.log(s)
-        return
         let tt =null
-        let ind =mockInLines.findIndex(x => x.id == s.index.id)
+        let ind =s.index
+        const item = mockInLines[ind]
         playerZeroMocks.map((mock, index)=>{
             if(mock.show){
                 tt = {...mock, index}
@@ -125,7 +118,7 @@ export const Game = ({ navigation }) => {
         setCurrent(tt)
         
         setTimeout(()=>{
-                addMock(s.index, ind, tt)
+                addMock(item, ind, tt)
             },0)
     }
     useFocusEffect(
@@ -165,18 +158,14 @@ export const Game = ({ navigation }) => {
 
     useEffect(() => {
         const { iniMock, ini0, ini1 } = generateMockInLines()
-        let mo = []
-        iniMock.map((it) => {
-            const { id, player, size } = it
-            mo.push({ id, player, size })
-
-        })
-        // setDummyBoard(Array.from(Array(9).keys()))
-
+       
         setMockInLines(iniMock)
         setPlayerZeroMocks(ini0)
         setPlayerOneMocks(ini1)
-        setDummyBoard([...mo])
+        setTimeout(()=>{
+
+            setStart(true)
+        },1000)
 
     }, [])
 
@@ -210,10 +199,18 @@ export const Game = ({ navigation }) => {
         setPlayerZeroMocks(ini0)
         setPlayerOneMocks(ini1)
         setCurrent(null)
+
+        if(isWinner!=null){
+             setTimeout(()=>{
+    setStart(false)
+            setStart(true)
+        },2000)
+        }
         setActivePlayer(lastPlayer)
         setIsWinner(false)
         setShowWinnerModal(false)
         setChange(!change)
+
 
 
     }

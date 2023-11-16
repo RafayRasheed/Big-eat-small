@@ -117,20 +117,22 @@ function checkWin(board, player)
     return gameWon;
 }
 function emptySquares(newBoard) {
-    // console.log(dummyBoard2)
-
-    // return newBoard.filter(x =>  typeof x == 'number')
-    return newBoard.filter(x =>  x.player == null)
+  const newMap = []
+  newBoard.map((x, i) =>{
+if( x.player == null){
+    newMap.push(i)
+}
+  })
+    return newMap
 }
 export function minimax2(newBoard, depth, alpha, beta, player)
 {
     bot_mark = 0
     player_mark = 1
     var availSpots =emptySquares(newBoard);
-
-   const it= [{player: 0, size: 2}, {player: 1, size: null}, {player: 0, size: null},
-     {player: 1, size: null}, {player: 0, size: null}, {player: 1, size: null},
-      {player: 0, size: 2}, {player: null, size: 0}, {player: 0, size: null}]
+//    const it= [{player: 0, size: 2}, {player: 1, size: null}, {player: 0, size: null},
+//      {player: 1, size: null}, {player: 0, size: null}, {player: 1, size: null},
+//       {player: 0, size: 2}, {player: null, size: 0}, {player: 0, size: null}]
     // calculating the playable spots in a board state
     // if terminal state reaches, return with the score
 
