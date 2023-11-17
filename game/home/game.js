@@ -93,33 +93,46 @@ export const Game = ({ navigation }) => {
 
     useEffect(() => {
         if (activePlayer == 0 && start) {
-           BotPlay()
+            BotPlay()
             // setChange(!change)
         }
 
     }, [activePlayer, start])
 
-    function BotPlay(){
+    function BotPlay() {
         let mo2 = []
         mockInLines.map((it, i) => {
-            const {player, size} = it
+            const { player, size } = it
             mo2.push({ player, size })
         })
- 
-        const s = minimax2(mo2,0, -10000, 10000,0)
-        let tt =null
-        let ind =s.index
+        let p0Mock = []
+        let p1Mock = []
+        playerZeroMocks.map((p, i) => {
+            p0Mock.push(p)
+            
+        })
+        playerOneMocks.map((p, i) => {
+            p1Mock.push(p)
+
+            
+        })
+        console.log('------------------------------------------', )
+        console.log('------------------------------------------', )
+        //  return
+        const s = minimax2(mo2, 0, -10000, 10000, 0,p0Mock, p1Mock )
+        let tt = null
+        let ind = s.index
         const item = mockInLines[ind]
-        playerZeroMocks.map((mock, index)=>{
-            if(mock.show){
-                tt = {...mock, index}
+        playerZeroMocks.map((mock, index) => {
+            if (mock.show) {
+                tt = { ...mock, index }
             }
         })
         setCurrent(tt)
-        
-        setTimeout(()=>{
-                addMock(item, ind, tt)
-            },0)
+
+        setTimeout(() => {
+            addMock(item, ind, tt)
+        }, 0)
     }
     useFocusEffect(
         React.useCallback(() => {
@@ -158,14 +171,14 @@ export const Game = ({ navigation }) => {
 
     useEffect(() => {
         const { iniMock, ini0, ini1 } = generateMockInLines()
-       
+
         setMockInLines(iniMock)
         setPlayerZeroMocks(ini0)
         setPlayerOneMocks(ini1)
-        setTimeout(()=>{
+        setTimeout(() => {
 
             setStart(true)
-        },1000)
+        }, 1000)
 
     }, [])
 
@@ -200,11 +213,11 @@ export const Game = ({ navigation }) => {
         setPlayerOneMocks(ini1)
         setCurrent(null)
 
-        if(isWinner!=null){
-             setTimeout(()=>{
-    setStart(false)
-            setStart(true)
-        },2000)
+        if (isWinner != null) {
+            setTimeout(() => {
+                setStart(false)
+                setStart(true)
+            }, 2000)
         }
         setActivePlayer(lastPlayer)
         setIsWinner(false)
