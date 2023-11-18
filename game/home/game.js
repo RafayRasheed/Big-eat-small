@@ -15,6 +15,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { minimax } from './checking';
 import { current } from '@reduxjs/toolkit';
 import { minimax2 } from './checking2';
+import { minimaxEasy } from './checkingEasy';
 
 const lineContainerSize = myWidth(75)
 const lineWidthSize = lineContainerSize / 20
@@ -98,29 +99,11 @@ export const Game = ({ navigation }) => {
         }
 
     }, [activePlayer, start])
-
-    function BotPlay() {
-        let mo2 = []
-        mockInLines.map((it, i) => {
-            const { player, size } = it
-            mo2.push({ player, size })
-        })
-        let p0Mock = []
-        let p1Mock = []
-        playerZeroMocks.map((p, i) => {
-            p0Mock.push(p)
-            
-        })
-        playerOneMocks.map((p, i) => {
-            p1Mock.push(p)
-
-            
-        })
-        console.log('------------------------------------------', )
-        console.log('------------------------------------------', )
-        //  return
-        const s = minimax2(mo2, 0, -10000, 10000, 0,p0Mock, p1Mock )
+    function goPlayBot(s) {
+  
+        
         let tt = null
+
         let ind = s.index
         const item = mockInLines[ind]
         playerZeroMocks.map((mock, index) => {
@@ -133,6 +116,51 @@ export const Game = ({ navigation }) => {
         setTimeout(() => {
             addMock(item, ind, tt)
         }, 0)
+    }
+    function BotPlay() {
+
+        let mo2 = []
+
+        // mockInLines.map((it, i) => {
+        //     const { player, size } = it
+        //     mo2.push({ player, size })
+        // })
+        let p0Mock = []
+        let p1Mock = []
+        playerZeroMocks.map((p, index) => {
+            if(p.show && p0Mock.findIndex(it => it.size == p.size) == -1){
+                p0Mock.push({...p, index})
+            }
+
+        })
+        playerOneMocks.map((p, index) => {
+            if(p.show && p1Mock.findIndex(it => it.size == p.size) == -1){
+                p1Mock.push({...p, index})
+            }
+
+
+        })
+        // const s = minimax2(mo2, 0, -10000, 10000, 0,p0Mock, p1Mock ,p0Mock[p0Mock.length-1].size,p0Mock.length-1 )
+
+        const mySize = 2
+        mockInLines.map((it, i) => {
+            const { player, size } = it
+            if(player!=null&& size<mySize){
+                mo2.push({ player:null, size:null })
+                console.log('g')
+
+            }
+            else{
+
+                mo2.push({ player, size })
+            }
+        })
+        console.log('------------------------------------------',mo2)
+        console.log('------------------------------------------')
+        const s = minimaxEasy(mo2, 0, -10000, 10000, 0,)
+
+        goPlayBot(s)
+
     }
     useFocusEffect(
         React.useCallback(() => {

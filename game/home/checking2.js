@@ -112,56 +112,71 @@ function checkWin(board, player) {
     }
     return gameWon;
 }
-function emptySquares(newBoard) {
+function emptySquares(newBoard, size) {
     const newMap = []
+    // newBoard.map((x, i) => {
+    //     if (x.player == null) {
+    //         newMap.push(i)
+    //     }
+    // })
     newBoard.map((x, i) => {
-        if (x.player == null) {
+        // if (x.player == null || x.size < size) {
+            if (x.player == null || x.size < size) {
             newMap.push(i)
         }
     })
     return newMap
 }
-export function minimax2(newBoard, depth, alpha, beta, player, playerZeroMocks, playerOneMocks) {
+function printPlayer0(newBoa) {
+    const newBoard = []
+    newBoa.map((it) => {
+        newBoard.push(it.player)
+    })
+    console.log(newBoard[0], newBoard[1], newBoard[2])
+    console.log(newBoard[3], newBoard[4], newBoard[5])
+    console.log(newBoard[6], newBoard[7], newBoard[8])
+}
+export function minimax2(newBoard, depth, alpha, beta, player, playerZeroMocks, playerOneMocks, size, index) {
     bot_mark = 0
     player_mark = 1
-    var availSpots = emptySquares(newBoard);
-    let p0Sizes = []
-    let p1Sizes = []
-    playerZeroMocks.map((p, i) => {
-        if (p.show && p0Sizes.findIndex(it => it == p.size) == -1) {
-            p0Sizes.push(p.size)
-
-        }
-
-    })
-    playerOneMocks.map((p, i) => {
-        if (p.show && p1Sizes.findIndex(it => it == p.size) == -1) {
-            p1Sizes.push(p.size)
-
-        }
-
-    })
-    //    const it= [{player: 0, size: 2}, {player: 1, size: null}, {player: 0, size: null},
-    //      {player: 1, size: null}, {player: 0, size: null}, {player: 1, size: null},
-    //       {player: 0, size: 2}, {player: null, size: 0}, {player: 0, size: null}]
-    // calculating the playable spots in a board state
-    // if terminal state reaches, return with the score
-
-    // return console.log(checkWin(it, player),availSpots)
+    var availSpots = emptySquares(newBoard, size);
+    // printPlayer0(newBoard)
+    console.log(size, index)
     if (checkWin(newBoard, bot_mark)) {
         //let opponent(ai) be the minimizer
-        // console.log('bot', -20+depth)
+
         return { score: -20 + depth };
     }
     else if (checkWin(newBoard, player_mark)) {
-        // console.log('player', 20-depth)
-
         // let player1(human) be the maximiser
+
         return { score: 20 - depth };
     }
 
-    else if (availSpots.length == 0) // tie 
+    else if (availSpots.length == 0) {
+
+
         return { score: 0 };
+    } // tie
+
+    // console.log(availSpots.length)
+    let p0Sizes = []
+    let p1Sizes = []
+    playerZeroMocks.map((p, index) => {
+        if (p.show) {
+            p0Sizes.push({ size: p.size, index })
+
+        }
+
+    })
+    playerOneMocks.map((p, index) => {
+        if (p.show) {
+            p1Sizes.push({ size: p.size, index })
+
+        }
+
+    })
+
 
 
     //if it is the ai's turn, lowest score (as we have taken ai as the minimiser)
@@ -169,27 +184,36 @@ export function minimax2(newBoard, depth, alpha, beta, player, playerZeroMocks, 
         var bestScore = 10000;
         var bestMove = {};
         for (var i = 0; i < availSpots.length; i++) {
-            for (var i = 0; i < p0Sizes.length; i++) {
 
 
-                newBoard[availSpots[i]] = { ...newBoard[availSpots[i]], player, size:p0Sizes[i] }; // set the empty spot to the current player
-
-                var value = minimax2(newBoard, depth + 1, alpha, beta, player_mark, playerZeroMocks, playerOneMocks);
+            newBoard[availSpots[i]] = { ...newBoard[availSpots[i]], player, size }; // set the empty spot to the current player
+            playerZeroMocks[index] = {
+                ...playerZeroMocks[index],
+                show: false
+            }
+            // console.log('-----0-----')
+            // printPlayer0(newBoard)
+            for (var j = 0; j < p1Sizes.length; j++) {
+                // var value = minimax2(newBoard, depth + 1, alpha, beta, player_mark, playerZeroMocks, playerOneMocks, p1Sizes[j].size, p1Sizes[j].index);
+                var value = minimax2(newBoard, depth + 1, alpha, beta, player_mark, playerZeroMocks, playerOneMocks, 2, 2);
                 if (value.score < bestScore) {
                     bestScore = value.score;
                     bestMove.index = availSpots[i];
                     bestMove.score = bestScore;
                 }
+            }
 
-                // reset the spot to empty for the next loop itereration
-                newBoard[availSpots[i]] = { size: null, player: null };
+            // reset the spot to empty for the next loop itereration
+            newBoard[availSpots[i]] = { size: null, player: null };
+            playerZeroMocks[index] = {
+                ...playerZeroMocks[index],
+                show: true,
+            }
+            beta = Math.min(beta, bestScore);
+            if (beta <= alpha) {
 
-                beta = Math.min(beta, bestScore);
-                if (beta <= alpha) {
 
-
-                    break;
-                }
+                break;
             }
 
             return bestMove;
@@ -202,19 +226,32 @@ export function minimax2(newBoard, depth, alpha, beta, player, playerZeroMocks, 
         var bestMove = {};
         for (var i = 0; i < availSpots.length; i++) {
             // set the empty spot to the current player
-            for (var i = 0; i < p1Sizes.length; i++) {
 
-            newBoard[availSpots[i]] = { ...newBoard[availSpots[i]], player,size:p1Sizes[i]  };
-            var value = minimax2(newBoard, depth + 1, alpha, beta, bot_mark, playerZeroMocks, playerOneMocks);
+            newBoard[availSpots[i]] = { ...newBoard[availSpots[i]], player, size: size };
+            playerOneMocks[index] = {
+                ...playerOneMocks[index],
+                show: false
+            }
+            // console.log('-----1-----')
+            // printPlayer0(newBoard)
+            for (var j = 0; j < p0Sizes.length; j++) {
 
-            if (value.score > bestScore) {
-                bestScore = value.score;
-                bestMove.index = availSpots[i];
-                bestMove.score = bestScore;
+                // var value = minimax2(newBoard, depth + 1, alpha, beta, bot_mark, playerZeroMocks, playerOneMocks, p0Sizes[j].size, p0Sizes[j].index);
+                var value = minimax2(newBoard, depth + 1, alpha, beta, bot_mark, playerZeroMocks, playerOneMocks, 2, 2);
+
+                if (value.score > bestScore) {
+                    bestScore = value.score;
+                    bestMove.index = availSpots[i];
+                    bestMove.score = bestScore;
+                }
             }
 
             // reset the spot to empty for the next loop itereration
             newBoard[availSpots[i]] = { size: null, player: null };
+            playerOneMocks[index] = {
+                ...playerOneMocks[index],
+                show: true
+            }
 
             alpha = Math.max(alpha, bestScore);
             if (beta <= alpha) {
@@ -223,25 +260,9 @@ export function minimax2(newBoard, depth, alpha, beta, player, playerZeroMocks, 
                 break;
             }
 
+
+            return bestMove;
         }
 
-        return bestMove;
     }
-
-    }
-}
-function mak() {
-
-    const i = minimax2(origBoard, 0, -10000, 10000, current).index
-    console.log('-----------------------------', i)
-    origBoard[i] = current
-    console.log(origBoard[0], origBoard[1], origBoard[2])
-    console.log(origBoard[3], origBoard[4], origBoard[5])
-    console.log(origBoard[6], origBoard[7], origBoard[8])
-    current = current == 'Z' ? 'X' : 'Z'
-    s += 1
-    if (s < 9) {
-        mak()
-    }
-
 }
