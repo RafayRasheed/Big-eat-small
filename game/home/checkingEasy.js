@@ -5,7 +5,7 @@ let current = 'Z'
 let s = 1 
 
 
-function checkWin(board, player)
+export function checkWinEasy(board, player)
 {
     var winning_combos = [
     [0,1,2],
@@ -63,10 +63,10 @@ export function minimaxEasy(newBoard, depth, alpha, beta, player)
     // calculating the playable spots in a board state
     // if terminal state reaches, return with the score
 
-    // return console.log(checkWin(it, player),availSpots)
-    if(checkWin(newBoard, bot_mark)) //let opponent(ai) be the minimizer
+    // return console.log(checkWinEasy(it, player),availSpots)
+    if(checkWinEasy(newBoard, bot_mark)) //let opponent(ai) be the minimizer
         return {score: -20+depth};
-    else if(checkWin(newBoard, player_mark)) // let player1(human) be the maximiser
+    else if(checkWinEasy(newBoard, player_mark)) // let player1(human) be the maximiser
         return {score: 20-depth};
     else if(availSpots.length == 0) // tie 
         return {score: 0};

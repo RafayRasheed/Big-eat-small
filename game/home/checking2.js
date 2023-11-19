@@ -127,7 +127,7 @@ function emptySquares(newBoard, size) {
     })
     return newMap
 }
-function printPlayer0(newBoa) {
+export function printPlayer0(newBoa) {
     const newBoard = []
     newBoa.map((it) => {
         newBoard.push(it.player)

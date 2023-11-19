@@ -14,8 +14,8 @@ import SoundPlayer from 'react-native-sound-player';
 import { useFocusEffect } from '@react-navigation/native';
 import { minimax } from './checking';
 import { current } from '@reduxjs/toolkit';
-import { minimax2 } from './checking2';
-import { minimaxEasy } from './checkingEasy';
+import { minimax2, printPlayer0 } from './checking2';
+import { checkWinEasy, minimaxEasy } from './checkingEasy';
 
 const lineContainerSize = myWidth(75)
 const lineWidthSize = lineContainerSize / 20
@@ -100,24 +100,27 @@ export const Game = ({ navigation }) => {
 
     }, [activePlayer, start])
     function goPlayBot(s) {
-  
-        
-        let tt = null
+
+
+        let tt = {
+            ...playerZeroMocks[s.indexMock],
+            index: s.indexMock
+        }
 
         let ind = s.index
         const item = mockInLines[ind]
-        playerZeroMocks.map((mock, index) => {
-            if (mock.show) {
-                tt = { ...mock, index }
-            }
-        })
+        // playerZeroMocks.map((mock, index) => {
+        //     if (mock.show) {
+        //         tt = { ...mock, index }
+        //     }
+        // })
         setCurrent(tt)
 
         setTimeout(() => {
             addMock(item, ind, tt)
         }, 0)
     }
-    function BotPlay() {
+    function BotPlayEasy() {
 
 
         // mockInLines.map((it, i) => {
@@ -140,43 +143,162 @@ export const Game = ({ navigation }) => {
 
         // })
         // const s = minimax2(mo2, 0, -10000, 10000, 0,p0Mock, p1Mock ,p0Mock[p0Mock.length-1].size,p0Mock.length-1 )
-       
-       
-       
-       
+
+
+
+
         let p0Mock = []
         playerZeroMocks.map((p, index) => {
-            if(p.show && p0Mock.findIndex(it => it == p.size) == -1){
-                p0Mock.push( p.size)
+            if (p.show && p0Mock.findIndex(it => it.size == p.size) == -1) {
+                p0Mock.push({ size: p.size, index })
             }
 
         })
-        const result = []
+        let singleResult = {}
+        console.log('------------------------------------------')
+        console.log('------------------------------------------')
+        p0Mock.map((it) => {
+            const mySize = it.size
+            let mo2 = []
 
-       console.log(p0Mock) 
-       p0Mock.map((mySize)=>{
-        let mo2 = []
+            mockInLines.map((it, i) => {
+                const { player, size } = it
+                if (player == 1 && size < mySize) {
+                    mo2.push({ player: null, size: null })
 
-           mockInLines.map((it, i) => {
-               const { player, size } = it
-               if(player!=null&& size<mySize){
-                   mo2.push({ player:null, size:null })
-    
-               }
-               else{
-    
-                   mo2.push({ player, size })
-               }
-           })
-           console.log('------------------------------------------')
-           console.log('------------------------------------------')
-           const s = minimaxEasy(mo2, 0, -10000, 10000, 0,)
-           result.push(s)
-       })
+                }
+                else {
 
-       console.log(result)
-       return
-        goPlayBot(s)
+                    mo2.push({ player, size })
+                }
+            })
+
+            const s = minimaxEasy(mo2, 0, -10000, 10000, 0,)
+            if (singleResult.score) {
+
+                if (s.score < singleResult.score) {
+                    singleResult = {
+                        ...s,
+                        indexMock: it.index,
+                        size: mySize,
+
+                    }
+                }
+            }
+            else {
+                singleResult = {
+                    ...s,
+                    indexMock: it.index,
+                    size: mySize,
+                }
+            }
+            console.log(singleResult)
+        })
+
+        goPlayBot(singleResult)
+
+    }
+    function BotPlay() {
+
+
+        let p0Mock = []
+        playerZeroMocks.map((p, index) => {
+            if (p.show && p0Mock.findIndex(it => it.size == p.size) == -1) {
+                p0Mock.push({ size: p.size, index })
+            }
+
+        })
+        let singleResult = {}
+        console.log('------------------------------------------')
+        console.log('------------------------------------------')
+
+
+        // p0Mock.map((it) =>
+        for (j = 0; j < p0Mock.length; j++) {
+            const it = p0Mock[j]
+            const mySize = it.size
+            let mo2 = []
+
+            mockInLines.map((it, i) => {
+                const { player, size } = it
+                if (player == 1 && size < mySize) {
+                    mo2.push({ player: null, size: null })
+
+                }
+                else {
+
+                    mo2.push({ player, size })
+                }
+            })
+
+            const s = minimaxEasy(mo2, 0, -10000, 10000, 0,)
+            singleResult = {
+                ...s,
+                indexMock: it.index,
+                size: mySize,
+
+            }
+
+
+            mo2[singleResult.index].player = 0
+            mo2[singleResult.index].size = mySize
+            const isBottWin = checkWinEasy(mo2, 0) ? true : false
+
+            if (isBottWin) {
+                break
+            }
+            let mo3 = []
+
+            mockInLines.map((it, i) => {
+                const { player, size } = it
+                if (i==singleResult.index) {
+                    mo3.push({ player: 0, size: mySize })
+
+                }
+                else {
+
+                    mo3.push({ player, size })
+                }
+            })
+            let isOpenantWin = false
+            const s2 = minimaxEasy(mo3, 0, -10000, 10000, 1,)
+
+            if (s2.index == 0 || s2.index) {
+
+
+                mo3[s2.index].player = 1
+                mo3[s2.index].size = mySize
+                isOpenantWin = checkWinEasy(mo3, 1) ? true : false
+                console.log('-------------', s2.index, isOpenantWin)
+                printPlayer0(mo3)
+                // console.log(singleResult, isOpenantWin, s2)
+
+            }
+
+            // singleResult.isOpenantWin=isOpenantWin
+            if (!isOpenantWin) {
+                if (singleResult.score) {
+
+                    if (s.score < singleResult.score) {
+                        singleResult = {
+                            ...s,
+                            indexMock: it.index,
+                            size: mySize,
+
+                        }
+                    }
+                }
+                else {
+                    singleResult = {
+                        ...s,
+                        indexMock: it.index,
+                        size: mySize,
+                    }
+                }
+            }
+        }
+        // return
+        goPlayBot(singleResult)
 
     }
     useFocusEffect(
