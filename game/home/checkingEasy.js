@@ -37,7 +37,7 @@ export function checkWinEasy(board, player)
         if(score == 3)
         {
 
-            gameWon = {index: i, player : player};
+            gameWon = {index: i, player : player, format:winning_combos[i]};
             break;
         }
     }
