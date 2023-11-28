@@ -400,7 +400,6 @@ export const Game = ({ navigation }) => {
         }
         singleResult = fixesResult?fixesResult:singleResult
      
-        console.log(fixesResult)
         console.log('-------------', singleResult)
         goPlayBot(singleResult)
 
