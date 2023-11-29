@@ -186,7 +186,7 @@ export const Game = ({ navigation }) => {
         let singleResult = null
         let fixesResult = null
         let AllResult = []
-        console.log('------------------------------------------',p0Mock)
+        console.log('------------------------------------------', p0Mock)
         console.log('------------------------------------------')
 
 
@@ -246,11 +246,11 @@ export const Game = ({ navigation }) => {
                 mo3[s2.index].size = mySize
                 isOpenantWin = checkWinEasy(mo3, 1) ? true : false
                 if (isOpenantWin == true) {
-                    const it = p0Mock[p0Mock.length-1]
+                    const it = p0Mock[p0Mock.length - 1]
 
-                    fixesResult= {
+                    fixesResult = {
                         ...singleResult,
-                        index:s2.index,
+                        index: s2.index,
                         indexMock: it.index,
                         size: it.size,
                     }
@@ -263,7 +263,7 @@ export const Game = ({ navigation }) => {
             }
 
             if (!isOpenantWin) {
-                if (singleResult.score ||singleResult.score==0) {
+                if (singleResult.score || singleResult.score == 0) {
                     if (s.score < singleResult.score) {
                         singleResult = {
                             ...s,
@@ -282,8 +282,8 @@ export const Game = ({ navigation }) => {
                 }
             }
         }
-        singleResult = fixesResult?fixesResult:singleResult
-     
+        singleResult = fixesResult ? fixesResult : singleResult
+
         console.log(fixesResult)
         console.log('-------------', singleResult)
         goPlayBot(singleResult)
@@ -294,15 +294,21 @@ export const Game = ({ navigation }) => {
 
         let p0Mock = []
         playerZeroMocks.map((p, index) => {
-            if (p.show && p0Mock.findIndex(it => it.size == p.size) == -1) {
-                p0Mock.push({ size: p.size, index })
+            if (p.show) {
+                const i2 = p0Mock.findIndex(it => it.size == p.size)
+                if (i2 == -1) {
+                    p0Mock.push({ size: p.size, index, count: 1 })
+
+                } else {
+                    p0Mock[i2].count = p0Mock[i2].count + 1
+                }
             }
 
         })
         let singleResult = null
         let fixesResult = null
         let AllResult = []
-        console.log('------------------------------------------',p0Mock)
+        console.log('------------------------------------------', p0Mock)
         console.log('------------------------------------------')
 
 
@@ -340,7 +346,20 @@ export const Game = ({ navigation }) => {
                 break
             }
             let mo3 = []
+            let p1Mock = []
+            playerOneMocks.map((p, index) => {
+                if (p.show) {
+                    const i2 = p1Mock.findIndex(it => it.size == p.size)
+                    if (i2 == -1) {
+                        p1Mock.push({ size: p.size, index, count: 1 })
 
+                    } else {
+                        p1Mock[i2].count = p1Mock[i2].count + 1
+                    }
+                }
+
+            })
+            console.log('p1Mock', p1Mock)
             mockInLines.map((it, i) => {
                 const { player, size } = it
                 if (i == singleResult.index) {
@@ -362,11 +381,16 @@ export const Game = ({ navigation }) => {
                 mo3[s2.index].size = mySize
                 isOpenantWin = checkWinEasy(mo3, 1) ? true : false
                 if (isOpenantWin == true) {
-                    const it = p0Mock[p0Mock.length-1]
-
-                    fixesResult= {
+                    let it = p0Mock[p0Mock.length - 1]
+                    if (p1Mock.length < p0Mock.length) {
+                        it = p0Mock[p1Mock.length - 1]
+                    }
+                    // if (p1Mock.findIndex(s => s.size == it.size)==-1) {
+                    //     it = p0Mock[p0Mock.length - 1]
+                    // }
+                    fixesResult = {
                         ...singleResult,
-                        index:s2.index,
+                        index: s2.index,
                         indexMock: it.index,
                         size: it.size,
                     }
@@ -378,8 +402,8 @@ export const Game = ({ navigation }) => {
 
             }
 
-            if (!isOpenantWin) {
-                if (singleResult.score ||singleResult.score==0) {
+            if (fixesResult == null) {
+                if (singleResult.score || singleResult.score == 0) {
                     if (s.score < singleResult.score) {
                         singleResult = {
                             ...s,
@@ -398,8 +422,8 @@ export const Game = ({ navigation }) => {
                 }
             }
         }
-        singleResult = fixesResult?fixesResult:singleResult
-     
+        singleResult = fixesResult ? fixesResult : singleResult
+
         console.log('-------------', singleResult)
         goPlayBot(singleResult)
 
