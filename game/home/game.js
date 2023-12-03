@@ -296,7 +296,10 @@ export const Game = ({ navigation }) => {
 
 
         let p0Mock = []
+        let p1Mock = []
         let player0Remaining = 0
+        let player1Remaining = 0
+
         playerZeroMocks.map((p, index) => {
             if (p.show) {
                 player0Remaining += 1
@@ -310,13 +313,29 @@ export const Game = ({ navigation }) => {
             }
 
         })
+        playerOneMocks.map((p, index) => {
+            if (p.show) {
+                player1Remaining += 1
+
+                const i2 = p1Mock.findIndex(it => it.size == p.size)
+                if (i2 == -1) {
+                    p1Mock.push({ size: p.size, index, count: 1 })
+
+                } else {
+                    p1Mock[i2].count = p1Mock[i2].count + 1
+                }
+            }
+
+        })
+        const isBotFirst = player0Remaining<=player1Remaining
+
         let singleResult = null
         let fixesResult = null
         let AllResult = []
-        console.log('------------------------------------------',)
+        console.log('------------------------------------------',isBotFirst)
         console.log('------------------------------------------')
 
-        if (player0Remaining == 9 && mockInLines[4].player==null) {
+        if (player0Remaining == 9 && (mockInLines[4].player==null||mockInLines[4].size<2)) {
             fixesResult = {
                 index: 4, indexMock: 8, score: -17, size: 2
             }
@@ -353,6 +372,7 @@ export const Game = ({ navigation }) => {
 
                 }
 
+                AllResult.push(singleResult)
 
                 mo2[singleResult.index].player = 0
                 mo2[singleResult.index].size = mySize
@@ -363,19 +383,7 @@ export const Game = ({ navigation }) => {
                     break
                 }
                 let mo3 = []
-                let p1Mock = []
-                playerOneMocks.map((p, index) => {
-                    if (p.show) {
-                        const i2 = p1Mock.findIndex(it => it.size == p.size)
-                        if (i2 == -1) {
-                            p1Mock.push({ size: p.size, index, count: 1 })
-
-                        } else {
-                            p1Mock[i2].count = p1Mock[i2].count + 1
-                        }
-                    }
-
-                })
+               
                 mockInLines.map((it, i) => {
                     const { player, size } = it
                     if (i == singleResult.index) {
@@ -411,11 +419,7 @@ export const Game = ({ navigation }) => {
                             size: it.size,
                         }
                     }
-                    else {
-                        AllResult.push(singleResult)
-
-                        // singleResult.newScore = 10
-                    }
+                    
 
                     console.log('-------------', s2.index, singleResult.index, isOpenantWin)
                     // printPlayer0(mo3)
@@ -447,10 +451,14 @@ export const Game = ({ navigation }) => {
                 // }
             }
         }
+        const getResult = (AllResult)=>{
+let result = AllResult[AllResult.length-1]
+        console.log('-------------AllResult', AllResult)
+        return result
+            
+        }
+        singleResult = fixesResult ? fixesResult :AllResult.length?getResult(AllResult):singleResult
 
-        singleResult = fixesResult ? fixesResult :AllResult.length? AllResult[AllResult.length - 1]:singleResult
-
-        console.log('-------------AllResult', singleResult)
         goPlayBot(singleResult)
  
     }
