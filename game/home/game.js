@@ -327,15 +327,15 @@ export const Game = ({ navigation }) => {
             }
 
         })
-        const isBotFirst = player0Remaining<=player1Remaining
+        const isBotFirst = player0Remaining <= player1Remaining
 
         let singleResult = null
         let fixesResult = null
         let AllResult = []
-        console.log('------------------------------------------',isBotFirst)
+        console.log('------------------------------------------', isBotFirst)
         console.log('------------------------------------------')
 
-        if (player0Remaining == 9 && (mockInLines[4].player==null||mockInLines[4].size<2)) {
+        if (player0Remaining == 9 && (mockInLines[4].player == null || mockInLines[4].size < 2)) {
             fixesResult = {
                 index: 4, indexMock: 8, score: -17, size: 2
             }
@@ -383,7 +383,7 @@ export const Game = ({ navigation }) => {
                     break
                 }
                 let mo3 = []
-               
+
                 mockInLines.map((it, i) => {
                     const { player, size } = it
                     if (i == singleResult.index) {
@@ -419,7 +419,7 @@ export const Game = ({ navigation }) => {
                             size: it.size,
                         }
                     }
-                    
+
 
                     console.log('-------------', s2.index, singleResult.index, isOpenantWin)
                     // printPlayer0(mo3)
@@ -451,16 +451,16 @@ export const Game = ({ navigation }) => {
                 // }
             }
         }
-        const getResult = (AllResult)=>{
-let result = AllResult[AllResult.length-1]
-        console.log('-------------AllResult', AllResult)
-        return result
-            
+        const getResult = (AllResult) => {
+            let result = AllResult[AllResult.length - 1]
+            console.log('-------------AllResult', AllResult)
+            return result
+
         }
-        singleResult = fixesResult ? fixesResult :AllResult.length?getResult(AllResult):singleResult
+        singleResult = fixesResult ? fixesResult : AllResult.length ? getResult(AllResult) : singleResult
 
         goPlayBot(singleResult)
- 
+
     }
     useFocusEffect(
         React.useCallback(() => {
