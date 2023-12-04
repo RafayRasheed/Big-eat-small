@@ -332,8 +332,7 @@ export const Game = ({ navigation }) => {
         let singleResult = null
         let fixesResult = null
         let AllResult = []
-        console.log('------------------------------------------', isBotFirst)
-        console.log('------------------------------------------')
+        console.log('********************************************** isBotFirst', isBotFirst)
 
         if (player0Remaining == 9 && (mockInLines[4].player == null || mockInLines[4].size < 2)) {
             fixesResult = {
@@ -369,6 +368,8 @@ export const Game = ({ navigation }) => {
                     ...s,
                     indexMock: it.index,
                     size: mySize,
+                    isOpenantWin: false,
+                    winCount: 0
 
                 }
 
@@ -386,9 +387,8 @@ export const Game = ({ navigation }) => {
 
                 mockInLines.map((it, i) => {
                     const { player, size } = it
-                    if (i == singleResult.index) {
+                    if (i == singleResult.index && mySize >= p1Mock[p1Mock.length - 1].size) {
                         mo3.push({ player: 0, size: mySize })
-
                     }
                     else {
 
@@ -403,7 +403,10 @@ export const Game = ({ navigation }) => {
 
                     mo3[s2.index].player = 1
                     mo3[s2.index].size = mySize
-                    isOpenantWin = checkWinEasy(mo3, 1) ? true : false
+                    const winRes = checkWinEasy(mo3, 1)
+                    isOpenantWin = winRes ? true : false
+                    AllResult[AllResult.length - 1].isOpenantWin = isOpenantWin
+
                     if (isOpenantWin == true) {
                         let it = p0Mock[p0Mock.length - 1]
                         if (p1Mock.length < p0Mock.length) {
@@ -419,45 +422,61 @@ export const Game = ({ navigation }) => {
                             size: it.size,
                         }
                     }
+                    else {
+                        const s3 = minimaxEasy(mo3, 0, -10000, 10000, 0,)
+
+                        if (s3.index == 0 || s3.index) {
+
+                            mo3[s3.index].player = 0
+                            mo3[s3.index].size = p0Mock[p0Mock.length - 1].size
+                            const winRes2 = checkWinEasy(mo3, 0)
+                            const isBotAgainWin = winRes2 ? true : false
+                            console.log('hukum-----------', winRes2)
+                            if (isBotAgainWin) {
+                                AllResult[AllResult.length - 1].winCount = 1
+                                console.log('jeee')
 
 
-                    console.log('-------------', s2.index, singleResult.index, isOpenantWin)
-                    // printPlayer0(mo3)
-                    // console.log(singleResult, isOpenantWin, s2)
+                            }
+                        }
+                    }
+
 
                 }
+                console.log('-------------', AllResult[AllResult.length - 1])
 
-
-
-
-                // if (fixesResult == null) {
-                //     if (singleResult.score || singleResult.score == 0) {
-                //         if (s.score < singleResult.score) {
-                //             singleResult = {
-                //                 ...s,
-                //                 indexMock: it.index,
-                //                 size: mySize,
-
-                //             }
-                //         }
-                //     }
-                //     else {
-                //         singleResult = {
-                //             ...s,
-                //             indexMock: it.index,
-                //             size: mySize,
-                //         }
-                //     }
-                // }
             }
         }
         const getResult = (AllResult) => {
-            let result = AllResult[AllResult.length - 1]
-            console.log('-------------AllResult', AllResult)
+            let result = null
+            let fix = false
+            AllResult.map(it => {
+                const player0SizeCount = p0Mock.filter(ii => ii.size == it.size)[0].count
+                let player1SizeCount = p1Mock.filter(ii => ii.size == it.size)
+                player1SizeCount = player1SizeCount.length ? player1SizeCount[0].count : 0
+                if (it.winCount > 0) {
+                    fix = true
+                    result = it
+
+                }
+                else if (fix == false) {
+
+                    const isGoodMove = it.isOpenantWin ? false : isBotFirst ? player1SizeCount <= player0SizeCount : player1SizeCount < player0SizeCount
+
+                    if (isGoodMove) {
+                        result = it
+                    }
+                }
+            })
+            if (result == null) {
+                result = AllResult[AllResult.length * Math.random() | 0]
+            }
+
             return result
 
         }
         singleResult = fixesResult ? fixesResult : AllResult.length ? getResult(AllResult) : singleResult
+        console.log('------++++++++++++----------', AllResult)
 
         goPlayBot(singleResult)
 
@@ -545,7 +564,7 @@ export const Game = ({ navigation }) => {
             setTimeout(() => {
                 setStart(false)
                 setStart(true)
-            }, 500)
+            }, 700)
         }
         setActivePlayer(lastPlayer)
         setIsWinner(false)
